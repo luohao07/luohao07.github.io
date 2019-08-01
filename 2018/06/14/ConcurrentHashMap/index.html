@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      ConcurrentHashMap源码解析 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>ConcurrentHashMap源码解析</h2>
+  <p class="post-date">2018-06-14</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="一-1-7版本的实现方式"><a href="#一-1-7版本的实现方式" class="headerlink" title="一 1.7版本的实现方式"></a>一 1.7版本的实现方式</h2><ul>
+<li>采用分段锁机制，底层有两个对象，一个是Segment对象，另一个是HashEntry对象</li>
+<li>一个Segment就是一把锁，它继承自ReentrantLock，每个Segment锁住若干个桶(不一定是一个)。</li>
+<li>一个HashEntry是一个链表，里面包含Key-Value和next等信息。</li>
+<li>一个ConcurrentHashMap里包含一个HashEntry数组和一个Segment数组。</li>
+</ul>
+<h2 id="二-ConcurrentHashMap的核心字段-内部类"><a href="#二-ConcurrentHashMap的核心字段-内部类" class="headerlink" title="二 ConcurrentHashMap的核心字段/内部类"></a>二 ConcurrentHashMap的核心字段/内部类</h2><table>
+<thead>
+<tr>
+<th>字段/类名</th>
+<th>类型</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>table</td>
+<td>Node[]</td>
+<td>底层保存数据的数组</td>
+<td>初始化时为null</td>
+</tr>
+<tr>
+<td>sizeCtl</td>
+<td>volatile int</td>
+<td>用于控制初始化和扩容，处理并发问题</td>
+<td>这个值为长度没有关系</td>
+</tr>
+<tr>
+<td>nextTable</td>
+<td>Node[]</td>
+<td>通常情况下为null，扩容时使用</td>
+<td>-</td>
+</tr>
+<tr>
+<td>ForwardingNode</td>
+<td>内部类</td>
+<td>-</td>
+<td>在扩容时用，扩容后，需要把table中的数据转移到nextTable中，转移的过程中可能存在并发问题，如果table中某个元素的这个值，说明这个元素正在被迁移。</td>
+</tr>
+<tr>
+<td>- sizeCtl的几种值及意义：</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>-  -1：表示正在初始化</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>-  -N: 表示有N-1个线程在扩容</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>- 其他情况下，如果table未被初始化，则表示初始化的长度，如果已经初始化，则表示table的容量。</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="三-初始化过程"><a href="#三-初始化过程" class="headerlink" title="三 初始化过程"></a>三 初始化过程</h2><p>ConcurrentHashMap的初始化没有初始化table，只是计算了sizeCtl：</p>
+<ul>
+<li>使用无参构造方法时，sizeCtl = 0，后续table初始化时使用默认容量16</li>
+<li>使用带有initialCapacity，sizeCtl是一个其乘以0.75表这个initialCapacity大的最小2的整数次幂。</li>
+</ul>
+<p>table的初始化放在第一次put的操作中，并且使用sizeCtl的原子操作来控制并发：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Node&lt;K,V&gt;[] initTable() &#123;</span><br><span class="line">    Node&lt;K,V&gt;[] tab; <span class="keyword">int</span> sc;</span><br><span class="line">    <span class="keyword">while</span> ((tab = table) == <span class="keyword">null</span> || tab.length == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((sc = sizeCtl) &lt; <span class="number">0</span>)</span><br><span class="line">            Thread.yield(); <span class="comment">// lost initialization race; just spin</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (U.compareAndSwapInt(<span class="keyword">this</span>, SIZECTL, sc, -<span class="number">1</span>)) &#123;</span><br><span class="line">          <span class="comment">//do real initTable</span></span><br><span class="line">           <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> tab;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="四-put操作"><a href="#四-put操作" class="headerlink" title="四 put操作"></a>四 put操作</h2><h4 id="4-1-hashCode到table下标的映射方式："><a href="#4-1-hashCode到table下标的映射方式：" class="headerlink" title="4.1 hashCode到table下标的映射方式："></a>4.1 hashCode到table下标的映射方式：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">h = key.hashCode();</span><br><span class="line">(h ^ (h &gt;&gt;&gt; 16)) &amp; HASH_BITS; //HASH_BITS=0x7fffffff</span><br><span class="line">index = h ^ (table.length - 1);</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-2-put操作的并发控制"><a href="#4-2-put操作的并发控制" class="headerlink" title="4.2 put操作的并发控制"></a>4.2 put操作的并发控制</h4><p>分以下几种情况：</p>
+<p><strong>4.2.1 table[index] == null</strong><br>说明这个节点重来未被插入过元素，直接CAS把这个节点值从null更新到新插入的值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if (tab == null || (n = tab.length) == 0)</span><br><span class="line">      tab = initTable();</span><br><span class="line">  else if ((f = tabAt(tab, i = (n - 1) &amp; hash)) == null) &#123;</span><br><span class="line">      if (casTabAt(tab, i, null,</span><br><span class="line">                   new Node&lt;K,V&gt;(hash, key, value, null)))</span><br><span class="line">          break;                   // no lock when adding to empty bin</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4.2.2 table[index]  instanceof ForwardingNode</strong><br>说明正在被扩容中，此时会去帮助一起扩容。</p>
+<p>扩容完成后会令table = nextTable，然后重新再执行一次插入操作</p>
+<p><strong>4.2.3 table[index] != null</strong><br>也就是说table对应下标的已经有其他元素了，这时需要把新元素加到链尾</p>
+<p>如果链表长度&gt;=8，则需要转换成红黑树</p>
+<p>如果已经是红黑树，则加入红黑树中</p>
+<p>这种情况下的并发控制：直接synchronized队头结点(或者红黑树的根结点)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> synchronized (f) &#123;</span><br><span class="line">                    if (tabAt(tab, i) == f) &#123;</span><br><span class="line">                    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>f即为table中对应下标的元素，f是在前面的判断中付值的，这里之所以要再判断if (tabAt(tab, i) == f) ，是因为这个位置的元素可能已经被修改了(例如其他线程扩容了)</p>
+<p>取table中的元素并不是采用table[index] 而是用UNSAFE.getObjectVolatile, 虽然table是volatile修饰的，但不能保证线程每次都拿到table中的最新元素，Unsafe.getObjectVolatile可以直接获取指定内存的数据，保证了每次拿到数据都是最新的。</p>
+<p>从网上查到的观点：volatile修饰数组时，只能保存数组引用的可见性，不能保存数组中元素的可见性，所以这里table虽然使用了volatile修饰，但是仍然不能保存table[index]可以拿到最新的值。</p>
+<h2 id="五扩容操作"><a href="#五扩容操作" class="headerlink" title="五扩容操作"></a>五扩容操作</h2><p>参考文章<a href="https://www.jianshu.com/p/f6730d5784ad" target="_blank" rel="noopener">https://www.jianshu.com/p/f6730d5784ad</a></p>
+<p>分为以下几步：</p>
+<ul>
+<li>第一个触发扩容的线程初始化nextTable数组，长度为原数组的两倍。同时使用CAS sizeCtl的值以确保nextTable只会初始化一次。</li>
+<li>初始化完成后开始迁移数据，从旧数组的最后一个元素开始迁移。这个过程可以多个线程一起执行。</li>
+<li>开始迁移之前，要先判断旧数组中的元素，如果为null，则直接跳过，如果为ForwardingNode则说明有其他线程正在迁移。</li>
+<li>否则说明该位置节点没有迁移，CAS操作把该位置节点设置成ForwardingNode，表明当前线程拿到了这个位置的迁移权限。</li>
+<li>开始迁移，遍历该链的所有节点，使用节点的hashCode &amp; n 把节点分成两类。把结果为1的和结果为0的分别做成hn和ln两个链表，把ln放在nextTable的旧位置上(原来是第5个桶就还放在第5个桶上)，把hn向后移动n个桶(就是放在nextTable的5+n的位置上)</li>
+</ul>
+<p>可以看出来，扩容操作的并发控制分为两点：</p>
+<ul>
+<li>一是使用sizeCtl的CAS操作保证nextTable只会初始化一次</li>
+<li>二是使用把旧数组的元素CAS为ForwardingNode的方式来保证一个桶只会被一个线程迁移。</li>
+</ul>
+<h2 id="六-如何统计数量"><a href="#六-如何统计数量" class="headerlink" title="六 如何统计数量"></a>六 如何统计数量</h2><p>Map有个size()方法会返回当前的数量，在HashMap中直接使用一个size类型记录。但是在ConcurrentHashMap中要考虑高并发的情况，首先肯定不能像HashMap一样用一个普通的int字段统计。</p>
+<p>可以使用一个原子类来记录，或者普通int字段加CAS操作，但是这样在高并发的情况下乐观锁的竞争压力太大，性能不行。</p>
+<p>ConcurrentHashMap在低并发的情况下就是这种方式，使用一个volatile long型的baseCount的CAS操作来计数。但是在高并发的情况下（如果baseCount的CAS操作出现竞争，就会转用高并发的方式）会有不同的方案。</p>
+<p>在高并发时ConcurrentHashMap使用了一组计数器来计数，每个线程第一次操作计数时都会随机选定一个计数器，然后使用这个计数器进行CAS操作。该线程以后再次操作计数时，都会使用同一个计数器（这是为了减少CAS的竞争）。</p>
+<p>计数器数组及里面的计数器的初始化都需要做并发控制，确保只初始化一次，ConcurrentHashMap中使用cellsBusy来控制并发</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2017/04/07/java集合框架总结/">
+        <span class="nav-arrow">← </span>
+        
+          java 集合框架梳理
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/09/21/并发编程总结/">
+        
+          并发编程总结
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-1-7版本的实现方式"><span class="toc-nav-text">一 1.7版本的实现方式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-ConcurrentHashMap的核心字段-内部类"><span class="toc-nav-text">二 ConcurrentHashMap的核心字段/内部类</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-初始化过程"><span class="toc-nav-text">三 初始化过程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#四-put操作"><span class="toc-nav-text">四 put操作</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-1-hashCode到table下标的映射方式："><span class="toc-nav-text">4.1 hashCode到table下标的映射方式：</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-2-put操作的并发控制"><span class="toc-nav-text">4.2 put操作的并发控制</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#五扩容操作"><span class="toc-nav-text">五扩容操作</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#六-如何统计数量"><span class="toc-nav-text">六 如何统计数量</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2018/06/14/ConcurrentHashMap/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

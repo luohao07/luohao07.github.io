@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      java 集合框架梳理 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>java 集合框架梳理</h2>
+  <p class="post-date">2017-04-07</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="一-java-集合框架图"><a href="#一-java-集合框架图" class="headerlink" title="一 java 集合框架图"></a>一 java 集合框架图</h2><p><img src="/imgs/7808098-ed470cc466a1fa98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="二-List"><a href="#二-List" class="headerlink" title="二 List"></a>二 List</h2><h4 id="2-1-ArrayList"><a href="#2-1-ArrayList" class="headerlink" title="2.1 ArrayList"></a>2.1 ArrayList</h4><p>底层数据结构：线性表(数组)<br>线程安全：否<br>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>elementData|Object[]|保存数据|-<br>size|int|长度|-<br>modCount|int|被修改的次数|-</p>
+<p> <strong>初始化过程：</strong><br>若带有容量参数，则使用此容量来初始化elementData，否则把elementData置为空数组</p>
+<p><strong>扩容方式：</strong></p>
+<ul>
+<li>初始容量大小：如果有容量参数，则使用指定初始容量大小，如果无容量参数，则在第一次添加时扩容为$\color{red}{默认值10}$。</li>
+<li>扩容机制：新容量 = 旧容量 * 1.5 即 newCapacity = oldCapaCity + (oldCapacity &gt;&gt; 1)<br>$\color{red}{疑惑，为什么选择10和1.5倍作为扩容机制，有什么考虑吗？}$</li>
+</ul>
+<p><strong>modCount的作用：</strong><br>使用迭代器循遍历ArrayList时，用于检测是否在迭代过程中被修改，即检测ConcurrentModificationException。</p>
+<ul>
+<li>在ArrayList的所有修改方法中，modCount都会被加1</li>
+<li>创建迭代器时，会把当前的modCount保存在迭代器的expectedModCount字段中</li>
+<li>每次迭代时，都会检测迭代器中expectedModCount与modCount是否相等</li>
+<li>在迭代器中的remove方法中，会在删除元素之后再同步一次modCount</li>
+</ul>
+<h4 id="2-2-LinkedList"><a href="#2-2-LinkedList" class="headerlink" title="2.2 LinkedList"></a>2.2 LinkedList</h4><p>底层数据结构：双向链表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">private static class Node&lt;E&gt; &#123;</span><br><span class="line">    E item;</span><br><span class="line">    Node&lt;E&gt; next;</span><br><span class="line">    Node&lt;E&gt; prev;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>线程安全：否<br>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>size|int|长度|-<br>first|Node|头节点|-<br>last|Node|尾节点|-</p>
+<ul>
+<li>LinkedList的初始化没有任何操作</li>
+<li>只有一个节点时，first和last都指向这一个节点</li>
+<li>如果LinkedList存在多个相同的节点，使用remove(Object o) 方法移除元素时，只会移除第一个</li>
+</ul>
+<h2 id="2-3-Vector"><a href="#2-3-Vector" class="headerlink" title="2.3 Vector"></a>2.3 Vector</h2><p>ArrayList的线程安全版本<br>底层数据结构：线性表<br>线程安全：是</p>
+<p><strong>初始化：</strong><br>默认初始化容量为10，也可以指定大小。</p>
+<p><strong>扩容：</strong><br>初始化时可指定每次扩容增加的容量数，如果没有指定，则每次都翻倍</p>
+<p><strong>线程安全方式：</strong><br>为每个方法都加上synchronized关键字</p>
+<h2 id="三-Map"><a href="#三-Map" class="headerlink" title="三 Map"></a>三 Map</h2><h4 id="3-1-HashMap"><a href="#3-1-HashMap" class="headerlink" title="3.1 HashMap"></a>3.1 HashMap</h4><p>底层数据结构：桶链结构，跳表<br>是否线程安全：否</p>
+<p>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>table|Node[]|底层数据，即桶链|-<br>entrySet|Set&lt;Map.Entry&lt;K,V&gt;&gt;|所有的节点数据|与table重复，主要是为了entrySet()和values()方法<br>size|int|数据量|-<br>threshold|int|扩容阀值|-<br>loadFactor|float|扩容因子|-</p>
+<p><strong>hash函数：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);</span><br></pre></td></tr></table></figure>
+
+<p>为什么要这么设计？因为使用hash值散列到桶时，使用的是取余数的方法，这导致hash碰撞的机率只与hashCode的后几位有关，这个函数相当于把高位的值”混”在了低位中。可以参考<a href="https://www.zhihu.com/question/20733617/answer/111577937" target="_blank" rel="noopener">HashMap的hash函数为什么这么设计</a></p>
+<p><strong>怎么使用hashCode映射到数组的下标的？</strong></p>
+<p>首先使用上面的方式，设计出hash值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hash = (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16)</span><br></pre></td></tr></table></figure>
+
+<p>然后作以下计算</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">index = (n - 1) &amp; hash</span><br></pre></td></tr></table></figure>
+
+<p>n为数组长度，在HashMap中，n的值一定为2的整数次幂，所以n-1的两进制码一定是000…001111..111结构的。因此这个操作实际上是取了hash值的后面几位</p>
+<p><strong>扩容机制：</strong></p>
+<ul>
+<li>扩容时机：当size &gt;= threshold 时，扩容</li>
+<li>容量变量：默认值为16，如果给定了初始容量，则会使用比此容量大的最小2的整数次幂，每次扩容时翻倍</li>
+<li>具体操作：数组长度翻倍，threshold = 新数组长度*loadFactor，把所有元素全部重新计算下标，放入新的数组中。</li>
+</ul>
+<p><strong>红黑树：</strong></p>
+<ul>
+<li>这是一种比较复杂的平衡树，但是又不是绝对平衡，参考<a href="https://www.jianshu.com/p/e136ec79235c" target="_blank" rel="noopener">30张图带你彻底理解红黑树
+</a></li>
+</ul>
+<h4 id="3-2-TreeMap"><a href="#3-2-TreeMap" class="headerlink" title="3.2 TreeMap"></a>3.2 TreeMap</h4><p>排序Map，底层采用红黑树实现，线程不安全<br>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>comparator|Comparator|比较器，用于排序|-<br>root|Entry|根节点|-<br>size|int|数据长度|-<br>modCount|int|修改次数|-<br>实现了NavigableMap，可以获取指定Key范围的数据</p>
+<h4 id="3-3-其他Map"><a href="#3-3-其他Map" class="headerlink" title="3.3 其他Map"></a>3.3 其他Map</h4><ul>
+<li>IdentityHashMap:<br>与HashMap的区别在于，它是使用==来判断两个key是否相同，而HashMap使用的是equals</li>
+<li>LinkedHashMap<br>继续自HashMap，但是使用链表记录了插入顺序，即给每个Entry再添加了before, after参数。</li>
+<li>Collections.synchronizedMap<br>这是Collections的一个方法，用于把一个不安全的Map转成线程安全的Map，实现方法其实就是做了一层包装，把所有的线程不安全的方法都synchronized了</li>
+</ul>
+<h2 id="四-Set"><a href="#四-Set" class="headerlink" title="四 Set"></a>四 Set</h2><h4 id="4-1-HashSet"><a href="#4-1-HashSet" class="headerlink" title="4.1 HashSet"></a>4.1 HashSet</h4><p>底层使用HashMap实现，使用HashMap的Key来保存元素，所有的事都交给了HashMap处理，HashSet自己并没有什么额外的逻辑，可以说就是单纯的一层包装。<br>有三个构造方法，不同的构造方法会使用不同的HashMap:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public HashSet(int initialCapacity, float loadFactor) &#123;</span><br><span class="line">    map = new HashMap&lt;&gt;(initialCapacity, loadFactor);</span><br><span class="line">&#125;</span><br><span class="line">public HashSet(int initialCapacity) &#123;</span><br><span class="line">    map = new HashMap&lt;&gt;(initialCapacity);</span><br><span class="line">&#125;</span><br><span class="line">HashSet(int initialCapacity, float loadFactor, boolean dummy) &#123;</span><br><span class="line">    map = new LinkedHashMap&lt;&gt;(initialCapacity, loadFactor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出如果带有dummy参数，则会使用LinkedHashMap</p>
+<h4 id="4-2-TreeSet"><a href="#4-2-TreeSet" class="headerlink" title="4.2 TreeSet"></a>4.2 TreeSet</h4><p>同上，只是TreeSet的一层简单包装，没有特殊逻辑。</p>
+<h4 id="4-3-IdentitySet"><a href="#4-3-IdentitySet" class="headerlink" title="4.3 IdentitySet"></a>4.3 IdentitySet</h4><p>同上，包装了IdentityHashMap</p>
+<h4 id="4-4-LinkedHashSet"><a href="#4-4-LinkedHashSet" class="headerlink" title="4.4 LinkedHashSet"></a>4.4 LinkedHashSet</h4><p>继承自HashSet，初始化时调用了父类的带有dummy参数的构造方法，在此它实际上也是LinkedHashMap的一层包装。</p>
+<p>##参考文档<br><a href="https://www.cnblogs.com/zyuze/p/7726582.html" target="_blank" rel="noopener">modCount的作用</a><br><a href="https://www.zhihu.com/question/20733617/answer/111577937" target="_blank" rel="noopener">HashMap的hash函数为什么这么设计</a><br><a href="https://www.jianshu.com/p/e136ec79235c" target="_blank" rel="noopener">30张图带你彻底理解红黑树
+</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#Java基础" >
+    <span class="tag-code">Java基础</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+    
+      <a class="nav-right" href="/2018/06/14/ConcurrentHashMap/">
+        
+          ConcurrentHashMap源码解析
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-java-集合框架图"><span class="toc-nav-text">一 java 集合框架图</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-List"><span class="toc-nav-text">二 List</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-1-ArrayList"><span class="toc-nav-text">2.1 ArrayList</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-2-LinkedList"><span class="toc-nav-text">2.2 LinkedList</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-3-Vector"><span class="toc-nav-text">2.3 Vector</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-Map"><span class="toc-nav-text">三 Map</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-1-HashMap"><span class="toc-nav-text">3.1 HashMap</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-2-TreeMap"><span class="toc-nav-text">3.2 TreeMap</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-3-其他Map"><span class="toc-nav-text">3.3 其他Map</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#四-Set"><span class="toc-nav-text">四 Set</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-1-HashSet"><span class="toc-nav-text">4.1 HashSet</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-2-TreeSet"><span class="toc-nav-text">4.2 TreeSet</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-3-IdentitySet"><span class="toc-nav-text">4.3 IdentitySet</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-4-LinkedHashSet"><span class="toc-nav-text">4.4 LinkedHashSet</span></a></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2017/04/07/java集合框架总结/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

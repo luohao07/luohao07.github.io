@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Java NIO（二）NIO入门实例 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Java NIO（二）NIO入门实例</h2>
+  <p class="post-date">2019-07-20</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="一-Java-源生api的核心概念"><a href="#一-Java-源生api的核心概念" class="headerlink" title="一 Java 源生api的核心概念"></a>一 Java 源生api的核心概念</h2><h4 id="1-1-Channel"><a href="#1-1-Channel" class="headerlink" title="1.1 Channel"></a>1.1 Channel</h4><p> Channel：通道，BIO模型中使用流来传输数据，在NIO中使用Channel来传输数据，它是双向的，一个Channel即可以读也可以写（BIO中流是单向的，所以分了InputStream和OutputStream）。</p>
+<p>网络编程中用到的Channel只有ServerSocketChannel和SocketChannel，可以类比于ServerSocket和Socket，一个在服务端使用，一个在客户端使用。</p>
+<h4 id="1-2-Buffer"><a href="#1-2-Buffer" class="headerlink" title="1.2 Buffer"></a>1.2 Buffer</h4><p>在BIO中，可以将数据直接写入到流当中，但是在NIO中，数据只能写入到缓冲区中，Buffer就是缓冲区。</p>
+<p>一个Buffer其实就是一个字节数组，最常用的Buffer是ByteBuffer。</p>
+<h4 id="1-3-Selector"><a href="#1-3-Selector" class="headerlink" title="1.3 Selector"></a>1.3 Selector</h4><p>在文章<a href="https://www.jianshu.com/p/37a2bb9d1cae" target="_blank" rel="noopener">Java NIO（一）select 和 epoll底层实现原理</a>中，我们提到select/epoll函数可以同时监听多个socket，在socket准备就绪后会返回。</p>
+<p>Java中使用Selector对象完成select/epoll函数的功能，Selector可以监控多个Channel，当某一个Channel有数据可以读取时，Selector会把它选取出来，然后交给线程处理。</p>
+<h2 id="二-使用NIO构建一个简单的服务器"><a href="#二-使用NIO构建一个简单的服务器" class="headerlink" title="二 使用NIO构建一个简单的服务器"></a>二 使用NIO构建一个简单的服务器</h2><p>基本的步骤如下：</p>
+<ul>
+<li>创建一个ServerSocketChannel对象，绑定端口并配置成非阻塞模式。</li>
+<li>创建一个Selector，并把第一步创建的ServerSocketChannel交给Selector监听。</li>
+<li>不停的从Selector获取准备就绪的Channel，当有客户端连接时，ServerSocketChannel就会被选取出来。</li>
+<li>从ServerSocketChannel获取SocketChannel对象，这个对象代表了客户端，需要使用它来与客户端读写数据。</li>
+<li>把SocketChannel也交给Selector监听，当SocketChannel可以读取数据时，也会被选取出来</li>
+<li>SocketChannel被选取出来后，从中读取数据解析出请求，并写入返回数据。</li>
+</ul>
+<p>代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">public class NioServerTest &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception&#123;</span><br><span class="line">        //创建一个ServerSocketChannel对象，绑定端口并配置成非阻塞模式。</span><br><span class="line">        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();</span><br><span class="line">        serverSocketChannel.bind(new InetSocketAddress(8888), 1024);</span><br><span class="line">        //下面这句必需要，否则ServerSocketChannel会使用阻塞的模式，那就不是NIO了</span><br><span class="line">        serverSocketChannel.configureBlocking(false);</span><br><span class="line"></span><br><span class="line">        //把ServerSocketChannel交给Selector监听</span><br><span class="line">        Selector selector = Selector.open();</span><br><span class="line">        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);</span><br><span class="line"></span><br><span class="line">        //循环，不断的从Selector中获取准备就绪的Channel，最开始的时候Selector只监听了一个ServerSocketChannel</span><br><span class="line">        //但是后续有客户端连接时，会把客户端对应的Channel也交给Selector对象</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            //这一步会阻塞，当有Channel准备就绪时或者超过1000秒后会返回。</span><br><span class="line">            selector.select(1000);</span><br><span class="line">            //获取所有的准备就绪的Channel，SelectionKey中包含中Channel信息</span><br><span class="line">            Set&lt;SelectionKey&gt; selectionKeySet = selector.selectedKeys();</span><br><span class="line">            //遍历，每个Channel都可处理</span><br><span class="line">            for (SelectionKey selectionKey : selectionKeySet) &#123;</span><br><span class="line">                //如果Channel已经无效了，则跳过（如Channel已经关闭了）</span><br><span class="line">                if(!selectionKey.isValid()) &#123;</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                //判断Channel具体的就绪事件，如果是有客户端连接，则建立连接</span><br><span class="line">                if (selectionKey.isAcceptable()) &#123;</span><br><span class="line">                    acceptConnection(selectionKey, selector);</span><br><span class="line">                &#125;</span><br><span class="line">                //如果有客户端可以读取请求了，则读取请求然后返回数据</span><br><span class="line">                if (selectionKey.isReadable()) &#123;</span><br><span class="line">                    System.out.println(readFromSelectionKey(selectionKey));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            //处理完成后把返回的Set清空，如果不清空下次还会再返回这些Key，导致重复处理</span><br><span class="line">            selectionKeySet.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //客户端建立连接的方法</span><br><span class="line">    private static void acceptConnection(SelectionKey selectionKey, Selector selector) throws Exception&#123;</span><br><span class="line">        System.err.println(&quot;accept connection...&quot;);</span><br><span class="line">        //SelectionKey中包含选取出来的Channel的信息，我们可以从中获取，对于建立连接来说，只会有ServerSocketChannel可能触发，</span><br><span class="line">        //因此这里可以把它转成ServerSocketChannel对象</span><br><span class="line">        ServerSocketChannel ssc = ((ServerSocketChannel) selectionKey.channel());</span><br><span class="line">        //获取客户端对应的SocketChannel，也需要配置成非阻塞模式</span><br><span class="line">        SocketChannel socketChannel = ssc.accept();</span><br><span class="line">        socketChannel.configureBlocking(false);</span><br><span class="line">        //把客户端的Channel交给Selector监控，之后如果有数据可以读取时，会被select出来</span><br><span class="line">        socketChannel.register(selector, SelectionKey.OP_READ);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //从客户端读取数据的庐江</span><br><span class="line">    private static String readFromSelectionKey(SelectionKey selectionKey) throws Exception&#123;</span><br><span class="line">        //从SelectionKey中包含选取出来的Channel的信息把Channel获取出来</span><br><span class="line">        SocketChannel socketChannel = ((SocketChannel) selectionKey.channel());</span><br><span class="line">        //读取数据到ByteBuffer中</span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);</span><br><span class="line">        int len = socketChannel.read(byteBuffer);</span><br><span class="line">        //如果读到-1，说明数据已经传输完成了，可以并闭</span><br><span class="line">        if (len &lt; 0) &#123;</span><br><span class="line">            socketChannel.close();</span><br><span class="line">            selectionKey.cancel();</span><br><span class="line">            return &quot;&quot;;</span><br><span class="line">        &#125; else if(len == 0) &#123; //什么都没读到</span><br><span class="line">            return &quot;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        byteBuffer.flip();</span><br><span class="line">        doWrite(selectionKey, &quot;Hello Nio&quot;);</span><br><span class="line">        return new String(byteBuffer.array(), 0, len);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static void doWrite(SelectionKey selectionKey, String responseMessage) throws Exception&#123;</span><br><span class="line">        System.err.println(&quot;Output message...&quot;);</span><br><span class="line">        SocketChannel socketChannel = ((SocketChannel) selectionKey.channel());</span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocate(responseMessage.getBytes().length);</span><br><span class="line">        byteBuffer.put(responseMessage.getBytes());</span><br><span class="line">        byteBuffer.flip();</span><br><span class="line">        socketChannel.write(byteBuffer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>咋一看，有点多，其实很简单，两分钟就能看完了。另外，这只是个简单的示例代码，没有处理异常，关闭Channel和连接等操作，也没有考虑并发问题。</p>
+<p>使用浏览器访问<a href="http://localhost:8888/" target="_blank" rel="noopener">http://localhost:8888/</a>，可以在控制台上看到请求头信息就说明服务器搭建成功了（浏览器中是不会看到信息的，因为我们返回的数据就不是一个符合HTTP协议的数据）<br><img src="/imgs/7808098-0ca4bc8c42aff179.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" rel="noreferer"><br>把Channel交给Selector对象的代码中，有一个参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socketChannel.register(selector, SelectionKey.OP_READ);</span><br></pre></td></tr></table></figure>
+
+<p>这个参数表明了关注的内容，比如ServerSocketChannel，我们关注它什么时候需要建立连接，而SocketChannel我们关注它什么时候可以读写数据。</p>
+<h2 id="三-构建NIO的简单客户端"><a href="#三-构建NIO的简单客户端" class="headerlink" title="三 构建NIO的简单客户端"></a>三 构建NIO的简单客户端</h2><p>创建客户端的方式与服务端类似，这里不再重复，把步骤放在代码的注释中了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">public class NioClient &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception&#123;</span><br><span class="line">        //创建一个SocketChannel对象，配置成非阻塞模式</span><br><span class="line">        SocketChannel socketChannel = SocketChannel.open();</span><br><span class="line">        socketChannel.configureBlocking(false);</span><br><span class="line"></span><br><span class="line">        //创建一个选择器，并把SocketChannel交给selector对象</span><br><span class="line">        Selector selector = Selector.open();</span><br><span class="line">        socketChannel.register(selector, SelectionKey.OP_CONNECT);</span><br><span class="line"></span><br><span class="line">        //发起建立连接的请求，这里会立即返回，当连接建立完成后，SocketChannel就会被选取出来</span><br><span class="line">        socketChannel.connect(new InetSocketAddress(&quot;localhost&quot;, 8888));</span><br><span class="line"></span><br><span class="line">        //遍历，不段的从Selector中选取出已经就绪的Channel，在这个例子中，Selector只监控了一个SocketChannel</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            selector.select(1000);</span><br><span class="line">            Set&lt;SelectionKey&gt; selectionKeySet = selector.selectedKeys();</span><br><span class="line"></span><br><span class="line">            for (SelectionKey selectionKey : selectionKeySet) &#123;</span><br><span class="line">                if(!selectionKey.isValid()) &#123;</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                //连接建立完成后的操作：直接发送请求数据</span><br><span class="line">                if (selectionKey.isConnectable()) &#123;</span><br><span class="line">                    if(socketChannel.finishConnect()) &#123;</span><br><span class="line">                        socketChannel.register(selector, SelectionKey.OP_READ);</span><br><span class="line">                        doWriteRequest(((SocketChannel) selectionKey.channel()));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                //如果当前已经可以读数据了，说明服务端已经响应完了，读取数据</span><br><span class="line">                if (selectionKey.isReadable()) &#123;</span><br><span class="line">                    doRead(selectionKey);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            //最后同样要清除所有的Key</span><br><span class="line">            selectionKeySet.removeAll(selectionKeySet);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //发送请求</span><br><span class="line">    private static void doWriteRequest(SocketChannel socketChannel) throws Exception&#123;</span><br><span class="line">        System.err.println(&quot;start connect...&quot;);</span><br><span class="line"></span><br><span class="line">        //创建ByteBuffer对象，会放入数据</span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocate(&quot;Hello Server!&quot;.getBytes().length);</span><br><span class="line">        byteBuffer.put(&quot;Hello Server!&quot;.getBytes());</span><br><span class="line">        byteBuffer.flip();</span><br><span class="line">        //写数据</span><br><span class="line">        socketChannel.write(byteBuffer);</span><br><span class="line">        if(!byteBuffer.hasRemaining()) &#123;</span><br><span class="line">            System.err.println(&quot;Send request success...&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //读取服务端的响应</span><br><span class="line">    private static void doRead(SelectionKey selectionKey) throws Exception&#123;</span><br><span class="line">        SocketChannel socketChannel = ((SocketChannel) selectionKey.channel());</span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);</span><br><span class="line">        int len = socketChannel.read(byteBuffer);</span><br><span class="line">        System.out.println(&quot;Recv:&quot; + new String(byteBuffer.array(), 0 ,len));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先启动服务端，再启动客户端，可以在客户端看到服务端返回的数据：<br><img src="/imgs/7808098-13c834dc3e7cc588.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="客户端打印信息"><br>也可以在服务端看到客户端的请求数据：<br><img src="/imgs/7808098-843ffe83193320dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="服务端打印信息"></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#JavaNIO" >
+    <span class="tag-code">JavaNIO</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/07/19/Java NIO（一）select 和 epoll底层实现原理/">
+        <span class="nav-arrow">← </span>
+        
+          Java NIO（一）select 和 epoll底层实现原理
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/07/23/Java NIO（四）EventPool/">
+        
+          Java NIO（四）Netty核心组件及一次事件的处理流程
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-Java-源生api的核心概念"><span class="toc-nav-text">一 Java 源生api的核心概念</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-1-Channel"><span class="toc-nav-text">1.1 Channel</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-2-Buffer"><span class="toc-nav-text">1.2 Buffer</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-3-Selector"><span class="toc-nav-text">1.3 Selector</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-使用NIO构建一个简单的服务器"><span class="toc-nav-text">二 使用NIO构建一个简单的服务器</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-构建NIO的简单客户端"><span class="toc-nav-text">三 构建NIO的简单客户端</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2019/07/20/Java NIO（二）NIO入门实例/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

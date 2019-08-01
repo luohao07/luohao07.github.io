@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      JavaNIO（七）ChannelPipeline和ChannelHandler解析 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>JavaNIO（七）ChannelPipeline和ChannelHandler解析</h2>
+  <p class="post-date">2019-07-28</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="一-ChannelHandlerContext和ChannelHandler"><a href="#一-ChannelHandlerContext和ChannelHandler" class="headerlink" title="一 ChannelHandlerContext和ChannelHandler"></a>一 ChannelHandlerContext和ChannelHandler</h2><p>在ChannelPipeline这一层，ChannelPipeline会把收到的事件交给ChannelHandler处理。</p>
+<p>在外部，我们可以向ChannelPipeline中添加ChannelHandler处理器，但是添加到Pipeline中后，会被包装成一个ChannelHandlerContext对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final ChannelPipeline addLast(EventExecutorGroup group, String name, ChannelHandler handler) &#123;</span><br><span class="line">        newCtx = newContext(group, filterName(name, handler), handler);</span><br><span class="line">        addLast0(newCtx);</span><br><span class="line">        //...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ChannelHandlerContext主要是做了下面两件事：</p>
+<ul>
+<li>封装了ChannelPipeline，Unsafe，Channel，等对象信息，方便处理事件时使用</li>
+<li>对ChannelHandler的调用做了异步处理，可以接受一个Executor对象，然后对应ChannelHandler的所有事件都会被这一个Executor对象执行。</li>
+</ul>
+<p>在ChannelPipeline中，把所有的ChannelHandlerContext放在一个链表中，本身记录了链表的头尾节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">final AbstractChannelHandlerContext head;</span><br><span class="line">final AbstractChannelHandlerContext tail;</span><br></pre></td></tr></table></figure>
+
+<p>对于ChannelHandler中每一个事件相关的方法，ChannelHandlerContext中都有一个对应的fireXXX方法，这个方法用于向下一个ChannelHandler传递事件</p>
+<h2 id="二-inbound事件和outbound事件"><a href="#二-inbound事件和outbound事件" class="headerlink" title="二 inbound事件和outbound事件"></a>二 inbound事件和outbound事件</h2><p>Pipeline层把所有的事件分为两种：</p>
+<ul>
+<li>建立连接，读数据等客户端向服务端发送的事件称为inbound事件，这类事件会由链头开始向链尾传递处理。</li>
+<li>发送数据等由服务端向客户端进行操作的事件，称为outbound事件，这类事件会由链尾开始向链头传递处理。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">*                                                 I/O Request</span><br><span class="line">*                                            via &#123;@link Channel&#125; or</span><br><span class="line">*                                        &#123;@link ChannelHandlerContext&#125;</span><br><span class="line">*                                                      |</span><br><span class="line">*  +---------------------------------------------------+---------------+</span><br><span class="line">*  |                           ChannelPipeline         |               |</span><br><span class="line">*  |                                                  \|/              |</span><br><span class="line">*  |    +---------------------+            +-----------+----------+    |</span><br><span class="line">*  |    | Inbound Handler  N  |            | Outbound Handler  1  |    |</span><br><span class="line">*  |    +----------+----------+            +-----------+----------+    |</span><br><span class="line">*  |              /|\                                  |               |</span><br><span class="line">*  |               |                                  \|/              |</span><br><span class="line">*  |    +----------+----------+            +-----------+----------+    |</span><br><span class="line">*  |    | Inbound Handler N-1 |            | Outbound Handler  2  |    |</span><br><span class="line">*  |    +----------+----------+            +-----------+----------+    |</span><br><span class="line">*  |              /|\                                  .               |</span><br><span class="line">*  |               .                                   .               |</span><br><span class="line">*  | ChannelHandlerContext.fireIN_EVT() ChannelHandlerContext.OUT_EVT()|</span><br><span class="line">*  |        [ method call]                       [method call]         |</span><br><span class="line">*  |               .                                   .               |</span><br><span class="line">*  |               .                                  \|/              |</span><br><span class="line">*  |    +----------+----------+            +-----------+----------+    |</span><br><span class="line">*  |    | Inbound Handler  2  |            | Outbound Handler M-1 |    |</span><br><span class="line">*  |    +----------+----------+            +-----------+----------+    |</span><br><span class="line">*  |              /|\                                  |               |</span><br><span class="line">*  |               |                                  \|/              |</span><br><span class="line">*  |    +----------+----------+            +-----------+----------+    |</span><br><span class="line">*  |    | Inbound Handler  1  |            | Outbound Handler  M  |    |</span><br><span class="line">*  |    +----------+----------+            +-----------+----------+    |</span><br><span class="line">*  |              /|\                                  |               |</span><br><span class="line">*  +---------------+-----------------------------------+---------------+</span><br><span class="line">*                  |                                  \|/</span><br><span class="line">*  +---------------+-----------------------------------+---------------+</span><br><span class="line">*  |               |                                   |               |</span><br><span class="line">*  |       [ Socket.read() ]                    [ Socket.write() ]     |</span><br><span class="line">*  |                                                                   |</span><br><span class="line">*  |  Netty Internal I/O Threads (Transport Implementation)            |</span><br><span class="line">*  +-------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="二-ChannelPipeline的初始化过程"><a href="#二-ChannelPipeline的初始化过程" class="headerlink" title="二 ChannelPipeline的初始化过程"></a>二 ChannelPipeline的初始化过程</h2><p>ChannelPipeline使用双向链表维护了ChannlHandler的信息，所以初始化中最关键的，是初始化了双向队列的头尾节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">protected DefaultChannelPipeline(Channel channel) &#123;</span><br><span class="line">    //....</span><br><span class="line">    tail = new TailContext(this);</span><br><span class="line">    head = new HeadContext(this);</span><br><span class="line"></span><br><span class="line">    head.next = tail;</span><br><span class="line">    tail.prev = head;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里TailContext和HeadContext都是ChannelHandler的实现类<br>tail节点基本是空实现，或者仅仅打印一些日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">protected void onUnhandledInboundMessage(Object msg) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        logger.debug(</span><br><span class="line">                &quot;Discarded inbound message &#123;&#125; that reached at the tail of the pipeline. &quot; +</span><br><span class="line">                        &quot;Please check your pipeline configuration.&quot;, msg);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        ReferenceCountUtil.release(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而这个head节点，也就是HeadContext对象，就做了很多事了。</p>
+<p>例如，上一节说的，当向Channel中写数据时，数据会先被ChannelPipeline处理，然后再交给Unsafe，把数据写出去。 其实就是在HeadContext中，把数据交给Unsafe写出去的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) &#123;</span><br><span class="line">    unsafe.write(msg, promise);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于写数据是outbound事件，所以会由tail节点开始处理，数据到达head节点时已经处理完了。</p>
+<h2 id="三-处理一个事件的流程"><a href="#三-处理一个事件的流程" class="headerlink" title="三 处理一个事件的流程"></a>三 处理一个事件的流程</h2><p>以channelRead事件为例：</p>
+<p>在ChannelPipeline#fireChannelRead方法中，首先调用head节点的channelRead方法进行处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public final ChannelPipeline fireChannelRead(Object msg) &#123;</span><br><span class="line">    AbstractChannelHandlerContext.invokeChannelRead(head, msg);</span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AbstractChannelHandlerContext.invokeChannelRead方法的第一个参数是ChannelHandler类型的，方法内部会执行这个ChannelHandler对象的channelRead方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">static void invokeChannelRead(final AbstractChannelHandlerContext next, Object msg) &#123;</span><br><span class="line">    final Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, &quot;msg&quot;), next);</span><br><span class="line">    EventExecutor executor = next.executor();</span><br><span class="line">    if (executor.inEventLoop()) &#123;</span><br><span class="line">        next.invokeChannelRead(m);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        executor.execute(() -&gt; next.invokeChannelRead(m));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private void invokeChannelRead(Object msg) &#123;</span><br><span class="line">    if (invokeHandler()) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            ((ChannelInboundHandler) handler()).channelRead(this, msg);</span><br><span class="line">        &#125; catch (Throwable t) &#123;</span><br><span class="line">            notifyHandlerException(t);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        fireChannelRead(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码的逻辑就是判断是否配置了专门的线程池，如果配置了，就用专门的线程池去调用。</p>
+<p>上面说过，head节点其实就是一个HeadContext对象，因此具体执行到的就是HeadContext#channelRead方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void channelRead(ChannelHandlerContext ctx, Object msg) &#123;</span><br><span class="line">    ctx.fireChannelRead(msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>方法内只是简单的调用了ctx.fireChannelRead(msg); 这行代码的作用就是向下一个ChannelHanderl传递事件。因此，如果在想在某个ChannelHandler中拦截事件，那么只需要不加上这一行代码即可。</p>
+<p>然后这个ctx.fireChannelRead方法中，会找到下一个ChannelHandler：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public ChannelHandlerContext fireChannelRead(final Object msg) &#123;</span><br><span class="line">    invokeChannelRead(findContextInbound(MASK_CHANNEL_READ), msg);</span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>找到后又调用invokeChannelRead触发下一个ChannelHandler的channelRead方法。这就回到了最开始的地方。</p>
+<p>一直这样循环处理，直到所有的ChannelHandler处理完毕。</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#JavaNIO" >
+    <span class="tag-code">JavaNIO</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/07/27/JavaNIO（六）Unsafe和Channel解析/">
+        <span class="nav-arrow">← </span>
+        
+          JavaNIO（六）Unsafe和Channel解析
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/07/29/JavaNIO（八）ByteBuffer和ByteBuf解析/">
+        
+          JavaNIO（八）ByteBuffer和ByteBuf解析
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- No Comment -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-ChannelHandlerContext和ChannelHandler"><span class="toc-nav-text">一 ChannelHandlerContext和ChannelHandler</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-inbound事件和outbound事件"><span class="toc-nav-text">二 inbound事件和outbound事件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-ChannelPipeline的初始化过程"><span class="toc-nav-text">二 ChannelPipeline的初始化过程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-处理一个事件的流程"><span class="toc-nav-text">三 处理一个事件的流程</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2019/07/28/JavaNIO（七）ChannelPipeline和ChannelHandler解析/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
