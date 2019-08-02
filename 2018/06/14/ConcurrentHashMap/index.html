@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>ConcurrentHashMap源码解析</h2>
   <p class="post-date">2018-06-14</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-1-7版本的实现方式"><a href="#一-1-7版本的实现方式" class="headerlink" title="一 1.7版本的实现方式"></a>一 1.7版本的实现方式</h2><ul>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">ConcurrentHashMap源码解析
+      </p>
+      <p class="article-date" style="text-align: right">June 14, 2018</p>
+      <hr />
+      <h2 id="一-1-7版本的实现方式"><a href="#一-1-7版本的实现方式" class="headerlink" title="一 1.7版本的实现方式"></a>一 1.7版本的实现方式</h2><ul>
 <li>采用分段锁机制，底层有两个对象，一个是Segment对象，另一个是HashEntry对象</li>
 <li>一个Segment就是一把锁，它继承自ReentrantLock，每个Segment锁住若干个桶(不一定是一个)。</li>
 <li>一个HashEntry是一个链表，里面包含Key-Value和next等信息。</li>
@@ -247,7 +252,8 @@
 <p>ConcurrentHashMap在低并发的情况下就是这种方式，使用一个volatile long型的baseCount的CAS操作来计数。但是在高并发的情况下（如果baseCount的CAS操作出现竞争，就会转用高并发的方式）会有不同的方案。</p>
 <p>在高并发时ConcurrentHashMap使用了一组计数器来计数，每个线程第一次操作计数时都会随机选定一个计数器，然后使用这个计数器进行CAS操作。该线程以后再次操作计数时，都会使用同一个计数器（这是为了减少CAS的竞争）。</p>
 <p>计数器数组及里面的计数器的初始化都需要做并发控制，确保只初始化一次，ConcurrentHashMap中使用cellsBusy来控制并发</p>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">

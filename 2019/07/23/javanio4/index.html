@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>Java NIO（四）Netty核心组件及一次事件的处理流程</h2>
   <p class="post-date">2019-07-23</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-整个调用流程图"><a href="#一-整个调用流程图" class="headerlink" title="一 整个调用流程图"></a>一 整个调用流程图</h2><p>先放一张调用的流程图，从最下面开始往上调用。</p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">Java NIO（四）Netty核心组件及一次事件的处理流程
+      </p>
+      <p class="article-date" style="text-align: right">July 23, 2019</p>
+      <hr />
+      <h2 id="一-整个调用流程图"><a href="#一-整个调用流程图" class="headerlink" title="一 整个调用流程图"></a>一 整个调用流程图</h2><p>先放一张调用的流程图，从最下面开始往上调用。</p>
 <p><img src="/imgs/7808098-b7e2afc4e51453d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt="image.png"><br>除了最下面的Channel之外，关键的类就是EventLoop，Unsafe，ChannelPipeline，ChannelHandler。下面分别解析一下这四层。</p>
 <h2 id="二-EventLoop"><a href="#二-EventLoop" class="headerlink" title="二 EventLoop"></a>二 EventLoop</h2><p>从它的名字大概可以看出它是干嘛的：事件循环。实际上，它主要实现了启动新线程不断从Selector中获取可操作的Channel对象的流程。</p>
 <p>EventLoop内部有一个Selector，在服务器启动时，会把ServerSocketChannel注册到这个Selector中，之后客户端连接后，会把客户端对应的SocketChannel也注册到Selector中。</p>
@@ -195,7 +200,8 @@
 <li>channelRegistered(): Channel注册事件<br>…待补充</li>
 </ul>
 <h2 id="五-Bootstrap"><a href="#五-Bootstrap" class="headerlink" title="五 Bootstrap"></a>五 Bootstrap</h2><p>实际上，有了上面的几个类，我们就已经可以自己写一个服务器了，但是还比较麻烦，Bootstrap这一层帮我们封装了一些比较麻烦的细节，调用上面的四个类来组装一个服务器，可以说是Netty的facade了</p>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">

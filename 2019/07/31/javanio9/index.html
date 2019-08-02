@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>Java NIO（九）tcp粘包拆包及ByteToMessageDecoder</h2>
   <p class="post-date">2019-07-31</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-ByteToMessageDecoder"><a href="#一-ByteToMessageDecoder" class="headerlink" title="一 ByteToMessageDecoder"></a>一 ByteToMessageDecoder</h2><h4 id="1-1-实例"><a href="#1-1-实例" class="headerlink" title="1.1 实例"></a>1.1 实例</h4><p>ByteToMessageDecoder，用于把一个byte流转换成一个对象，实例：</p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">Java NIO（九）tcp粘包拆包及ByteToMessageDecoder
+      </p>
+      <p class="article-date" style="text-align: right">July 31, 2019</p>
+      <hr />
+      <h2 id="一-ByteToMessageDecoder"><a href="#一-ByteToMessageDecoder" class="headerlink" title="一 ByteToMessageDecoder"></a>一 ByteToMessageDecoder</h2><h4 id="1-1-实例"><a href="#1-1-实例" class="headerlink" title="1.1 实例"></a>1.1 实例</h4><p>ByteToMessageDecoder，用于把一个byte流转换成一个对象，实例：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class StringDecoder extends ByteToMessageDecoder &#123;</span><br><span class="line">    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List&lt;Object&gt; out) throws Exception &#123;</span><br><span class="line">        byte[] bytes = new byte[in.readableBytes()];</span><br><span class="line">        in.readBytes(bytes);</span><br><span class="line">        out.add(new String(bytes));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>它有一个抽象方法decode，我们实现了这个方法，这个方法的第三个参数是一个List<object>，所有加入这个List的对象都会被逐一的调用fireChannelRead方法映射事件。</object></p>
@@ -215,7 +220,8 @@
 <li>HttpRequestDecoder：http请求体协议处理器</li>
 <li>HttpResponseDecoder：http响应体处理器，很明显这个是用于客户端的</li>
 </ul>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">
@@ -240,6 +246,13 @@
         
       </a>
     
+    
+      <a class="nav-right" href="/2019/08/02/javaconcurrent01/">
+        
+          并发包源码学习（一）AQS锁
+        
+        <span class="nav-arrow"> →</span>
+      </a>
     
   </div>
 

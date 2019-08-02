@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>JavaNIO（六）Unsafe和Channel解析</h2>
   <p class="post-date">2019-07-27</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-Channel和Unsafe的关系"><a href="#一-Channel和Unsafe的关系" class="headerlink" title="一 Channel和Unsafe的关系"></a>一 Channel和Unsafe的关系</h2><p>首先这里的Channel是Netty中自定义的类，并不是JDK中提供的java.nio.channels.Channel类，它的全类名是io.netty.channel.Channel。</p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">JavaNIO（六）Unsafe和Channel解析
+      </p>
+      <p class="article-date" style="text-align: right">July 27, 2019</p>
+      <hr />
+      <h2 id="一-Channel和Unsafe的关系"><a href="#一-Channel和Unsafe的关系" class="headerlink" title="一 Channel和Unsafe的关系"></a>一 Channel和Unsafe的关系</h2><p>首先这里的Channel是Netty中自定义的类，并不是JDK中提供的java.nio.channels.Channel类，它的全类名是io.netty.channel.Channel。</p>
 <p>下面的讨论会同时涉及到这两个类，为了不搞混我们先约定在说Channel时，指的就是Netty中的Channel，而JDK中的Channel，我们用JavaChannel表示。</p>
 <p>Channel是一个接口，我们平常使用的是NioServerSocketChannel和NioSocketChannel，它们的继承关系图如下：<br><img src="/imgs/7808098-91da78e682e98a27.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="NioServerSocketChannel类继承关系图"><br><img src="/imgs/7808098-17202d700b56553c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="NioSocketChannel类继承关系图"></p>
 <p>而Unsafe是也是一个接口，它定义在Channel的内部，是Channel接口的内部接口。<br>在Channel的具体实现类中，也会有Unsafe的内部实现类。并且Channel中一个字段类型是Unsafe</p>
@@ -177,7 +182,8 @@
 <li>步骤四：ChannelRead事件发送完成后再调用Pipeline发送ChannelReadComplete事件。</li>
 </ul>
 <p>与上面的ACCEPT事件类似的处理逻辑，这里需要注意的是ACCEPT事件和READ事件都调用了Unsafe的read方法处理，但是实际上调用的不是同一个实现类的read方法。</p>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">

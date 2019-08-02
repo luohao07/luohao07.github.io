@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>JavaNIO（八）ByteBuffer和ByteBuf解析</h2>
   <p class="post-date">2019-07-29</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-ByteBuffer"><a href="#一-ByteBuffer" class="headerlink" title="一 ByteBuffer"></a>一 ByteBuffer</h2><h4 id="1-1-ByteBuffer的内部结构和读写模式"><a href="#1-1-ByteBuffer的内部结构和读写模式" class="headerlink" title="1.1 ByteBuffer的内部结构和读写模式"></a>1.1 ByteBuffer的内部结构和读写模式</h4><p>Java nio包提供的原生的缓存区类，基本的使用方式是：</p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">JavaNIO（八）ByteBuffer和ByteBuf解析
+      </p>
+      <p class="article-date" style="text-align: right">July 29, 2019</p>
+      <hr />
+      <h2 id="一-ByteBuffer"><a href="#一-ByteBuffer" class="headerlink" title="一 ByteBuffer"></a>一 ByteBuffer</h2><h4 id="1-1-ByteBuffer的内部结构和读写模式"><a href="#1-1-ByteBuffer的内部结构和读写模式" class="headerlink" title="1.1 ByteBuffer的内部结构和读写模式"></a>1.1 ByteBuffer的内部结构和读写模式</h4><p>Java nio包提供的原生的缓存区类，基本的使用方式是：</p>
 <ul>
 <li>创建对象，往里面写数据</li>
 <li>调用flip()方法，转换为读模式</li>
@@ -277,7 +282,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public int calculateNewCapacity(int minNewCapacity, int maxCapacity) &#123;</span><br><span class="line">    final int threshold = CALCULATE_THRESHOLD; // 4 MiB page</span><br><span class="line">    //如果刚好等于4Mib，则直接取4Mib</span><br><span class="line">    if (minNewCapacity == threshold) &#123;</span><br><span class="line">        return threshold;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // If over threshold, do not double but just increase by threshold.</span><br><span class="line">    //如果大于4Mib，则取比minNewCapacity大的最小4Mib整倍数</span><br><span class="line">    if (minNewCapacity &gt; threshold) &#123;</span><br><span class="line">        //minNewCapacity / threshold * threshold其实是计算比minNewCapacity小的最大threshold整倍数</span><br><span class="line">        int newCapacity = minNewCapacity / threshold * threshold;</span><br><span class="line">        if (newCapacity &gt; maxCapacity - threshold) &#123;</span><br><span class="line">            newCapacity = maxCapacity;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            newCapacity += threshold;</span><br><span class="line">        &#125;</span><br><span class="line">        return newCapacity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Not over threshold. Double up to 4 MiB, starting from 64.</span><br><span class="line">    int newCapacity = 64;</span><br><span class="line">    while (newCapacity &lt; minNewCapacity) &#123;</span><br><span class="line">        newCapacity &lt;&lt;= 1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return Math.min(newCapacity, maxCapacity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>注意：minNewCapacity / threshold * threshold，是计算比minNewCapacity小的最大threshold整倍数。例如 9 / 2 * 2 = 8</p>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">

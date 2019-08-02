@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>并发编程总结</h2>
   <p class="post-date">2018-09-21</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-多线程基础"><a href="#一-多线程基础" class="headerlink" title="一 多线程基础"></a>一 多线程基础</h2><h4 id="1-1-线程的状态及其变更"><a href="#1-1-线程的状态及其变更" class="headerlink" title="1.1 线程的状态及其变更"></a>1.1 线程的状态及其变更</h4><p><img src="/imgs/7808098-5ad3c8432971a43c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="线程的状态及其变更"></p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">并发编程总结
+      </p>
+      <p class="article-date" style="text-align: right">September 21, 2018</p>
+      <hr />
+      <h2 id="一-多线程基础"><a href="#一-多线程基础" class="headerlink" title="一 多线程基础"></a>一 多线程基础</h2><h4 id="1-1-线程的状态及其变更"><a href="#1-1-线程的状态及其变更" class="headerlink" title="1.1 线程的状态及其变更"></a>1.1 线程的状态及其变更</h4><p><img src="/imgs/7808098-5ad3c8432971a43c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="线程的状态及其变更"></p>
 <h4 id="1-2涉及到的各种方法"><a href="#1-2涉及到的各种方法" class="headerlink" title="1.2涉及到的各种方法"></a>1.2涉及到的各种方法</h4><ul>
 <li>Thread.start()<br>让线程进入就绪状态，不是立即执行</li>
 <li>Thread.yield()<br>Thread类的静态方法，让当前线程放弃CPU时间，从运行中状态变为就绪状态（可能又马上被CPU执行了）<ul>
@@ -404,7 +409,8 @@
 <li>在每个volatile读操作后面插入一个LL屏障</li>
 <li>在每个volatile读操作后面插入一个LS屏障</li>
 </ul>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">

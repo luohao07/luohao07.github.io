@@ -934,7 +934,7 @@ h2.article-head {
   padding-right: 5px;
 }
 .catalog-container {
-  display: block;
+  display: none;
   margin-left: 20px;
   flex-basis: 280px;
   -webkit-flex-basis: 280px;

@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>Java NIO（五）Netty线程模型及EventLoop源码解析</h2>
   <p class="post-date">2019-07-26</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><p>前面看完了Netty一次请求的处理流程以及相关的类，我们知道了Netty中核心的类或者说分层是：EventLoop，Unsafe，ChannelPipeline，ChannelHandler。其中的EventLoop用于启动一个线程，实例化一个Selector对象，然后不断的select出Channel交给Unsafe处理，接下来仔细分析一下EventLoop的行为。</p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">Java NIO（五）Netty线程模型及EventLoop源码解析
+      </p>
+      <p class="article-date" style="text-align: right">July 26, 2019</p>
+      <hr />
+      <p>前面看完了Netty一次请求的处理流程以及相关的类，我们知道了Netty中核心的类或者说分层是：EventLoop，Unsafe，ChannelPipeline，ChannelHandler。其中的EventLoop用于启动一个线程，实例化一个Selector对象，然后不断的select出Channel交给Unsafe处理，接下来仔细分析一下EventLoop的行为。</p>
 <h2 id="一-Netty线程模型"><a href="#一-Netty线程模型" class="headerlink" title="一 Netty线程模型"></a>一 Netty线程模型</h2><p>Netty可以根据用户的配置，使用以上三种不同的线程模型：</p>
 <h4 id="1-1-单线程模型"><a href="#1-1-单线程模型" class="headerlink" title="1.1 单线程模型"></a>1.1 单线程模型</h4><p>只启动一个线程，这个线程即负责所有的功能，包括以下两个：</p>
 <ul>
@@ -232,7 +237,8 @@
 <li>JDK中还有一个epool的bug，这个bug是什么，EventLoop是如何解决这个bug的</li>
 </ul>
 <p>这些内容，还是以后再补充吧。</p>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">

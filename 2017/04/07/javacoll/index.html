@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>java 集合框架梳理</h2>
   <p class="post-date">2017-04-07</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-java-集合框架图"><a href="#一-java-集合框架图" class="headerlink" title="一 java 集合框架图"></a>一 java 集合框架图</h2><p><img src="/imgs/7808098-ed470cc466a1fa98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">java 集合框架梳理
+      </p>
+      <p class="article-date" style="text-align: right">April 7, 2017</p>
+      <hr />
+      <h2 id="一-java-集合框架图"><a href="#一-java-集合框架图" class="headerlink" title="一 java 集合框架图"></a>一 java 集合框架图</h2><p><img src="/imgs/7808098-ed470cc466a1fa98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <h2 id="二-List"><a href="#二-List" class="headerlink" title="二 List"></a>二 List</h2><h4 id="2-1-ArrayList"><a href="#2-1-ArrayList" class="headerlink" title="2.1 ArrayList"></a>2.1 ArrayList</h4><p>底层数据结构：线性表(数组)<br>线程安全：否<br>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>elementData|Object[]|保存数据|-<br>size|int|长度|-<br>modCount|int|被修改的次数|-</p>
 <p> <strong>初始化过程：</strong><br>若带有容量参数，则使用此容量来初始化elementData，否则把elementData置为空数组</p>
 <p><strong>扩容方式：</strong></p>
@@ -207,7 +212,8 @@
 <h4 id="4-4-LinkedHashSet"><a href="#4-4-LinkedHashSet" class="headerlink" title="4.4 LinkedHashSet"></a>4.4 LinkedHashSet</h4><p>继承自HashSet，初始化时调用了父类的带有dummy参数的构造方法，在此它实际上也是LinkedHashMap的一层包装。</p>
 <p>##参考文档<br><a href="https://www.cnblogs.com/zyuze/p/7726582.html" target="_blank" rel="noopener">modCount的作用</a><br><a href="https://www.zhihu.com/question/20733617/answer/111577937" target="_blank" rel="noopener">HashMap的hash函数为什么这么设计</a><br><a href="https://www.jianshu.com/p/e136ec79235c" target="_blank" rel="noopener">30张图带你彻底理解红黑树
 </a></p>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">

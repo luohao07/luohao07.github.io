@@ -1,15 +1,16 @@
 (function ($) {
-  console.log('© Theme-Vexo | https://github.com/yanm1ng/hexo-theme-vexo')
   var app = $('.app-body')
   var header = $('.header')
   var banner = document.getElementById('article-banner') || false
   var about = document.getElementById('about-banner') || false
+  var articlePage = document.getElementById('article-page-tag') || false
   var top = $('.scroll-top')
   var catalog = $('.catalog-container .toc-main')
   var isOpen = false
 
   $(document).ready(function () {
     NProgress.start()
+  
     $('#nprogress .bar').css({
       'background': '#42b983'
     })
@@ -22,6 +23,14 @@
     if (banner) {
       app.css('transition-delay', '0.15s')
       $('#article-banner').children().css(fade)
+    }
+    if(articlePage){
+      header.addClass('fixed-header')
+      header.css({
+        "position": "unset"
+      });
+      app.css("padding", "0px");
+      $('html, body').animate({ scrollTop: 60 }, 600)
     }
     if (about) {
       $('.author').children().css(fade)

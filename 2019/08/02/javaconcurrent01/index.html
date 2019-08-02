@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      并发包源码学习（一）AQS锁 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    <script src="/js/gitment.js"></script>
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2>并发包源码学习（一）AQS锁</h2>
+  <p class="post-date">2019-08-02</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">并发包源码学习（一）AQS锁
+      </p>
+      <p class="article-date" style="text-align: right">August 2, 2019</p>
+      <hr />
+      <h2 id="一-什么是AQS"><a href="#一-什么是AQS" class="headerlink" title="一 什么是AQS"></a>一 什么是AQS</h2><p>AQS即AbstractQueuedSynchronizer，在Java并发包中的一个基础类，并发包中的所有锁相关类，如ReentrantLock，ReentrantReadWriteLock，Semaphone等都是基于AQS锁来实现的。</p>
+<p>先放张简单点的图，这张图以后会再补充的<br><img src="/imgs/7808098-b4bc54fe8e786857.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/500" alt></p>
+<p>所以说AQS锁虽然是一个抽象类，但是它在并发包中真的是有举足轻重的地位。</p>
+<h2 id="二-AQS锁的核心字段及核心流程"><a href="#二-AQS锁的核心字段及核心流程" class="headerlink" title="二 AQS锁的核心字段及核心流程"></a>二 AQS锁的核心字段及核心流程</h2><ul>
+<li>state：表示锁的状态，不同的子类可以有不同的约定，如ReentrantLock规定state = 0 表示没有线程占用锁，state &gt; 0 表示有线程占有锁</li>
+<li>head/tail：分别是等待队列的头尾节点，这个队列用于记录等待在这个锁上的所有线程</li>
+<li>exclusiveOwnerThread：用于记录占有锁的线程，之所以要记录这个值，是因为在释放锁的时候需要对线程进行校验，不能出行A线程加了锁，结果B线程把锁释放了的情况。</li>
+</ul>
+<p>核心流程：</p>
+<ul>
+<li>当线程A调用acquire()方法获取锁时，会先对state字段做一个CAS操作，如把state从0设置到1。如果CAS操作成功，表示获取锁成功，线程继续执行后续</li>
+<li>如果CAS操作失败了，意味着有其他线程已经占有锁了（假定是线程B占有了锁），这时候会把线程A加入到等待队列中</li>
+<li>当线程B调用release()方法释放锁时，会把state字段重新设置为0，成功之后会唤醒等待队列的头节点A，并且还会把头节点从队列中移除</li>
+<li>线程A被唤醒后会重试acquire()方法获取锁</li>
+</ul>
+<p>核心方法： </p>
+<ul>
+<li><p>tryAcquire()方法：这个方法的逻辑是对state字段做CAS操作，如果成功则返回true，表示获取锁成功，否则返回false表示获取锁失败。由于不同的子类需要做的CAS操作可能不一样，所以这个方法是abstract的，由子类实现，如ReentrantLock的实现大概是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (compareAndSetState(0, acquires)) &#123;</span><br><span class="line">    setExclusiveOwnerThread(current);</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br><span class="line">return fasle;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>acquire()方法：这个方法是AQS对外提供的获取锁的方法，它的逻辑是调用tryAcquire()获取锁，并且在获取锁失败后把当前线程加入到等待队列的队尾。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final void acquire(int arg) &#123;</span><br><span class="line">    if (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">        selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>tryRelease()方法：与tryAcquire方法相反，它用于释放锁，例如把state字段重新设置回0。与tryAcquire不同的是，它通常不需要把state做CAS操作，因为只有占有锁的线程会调用到这个方法，所以不存在并发问题。</p>
+</li>
+<li><p>release() 方法：AQS提供给外部的释放锁的方法，它的逻辑是先调用tryRelease释放锁，然后再唤醒等待队列的头节点。</p>
+</li>
+</ul>
+<h2 id="三-使用AQS实现一把锁"><a href="#三-使用AQS实现一把锁" class="headerlink" title="三 使用AQS实现一把锁"></a>三 使用AQS实现一把锁</h2><p>代码非常简单，写一个类，继承AbstractQueuedSynchronizer，同时由于它是一把锁，所以我们还需要实现Lock接口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class AQSLock extends AbstractQueuedSynchronizer implements Lock &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void lock() &#123;</span><br><span class="line">        acquire(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void unlock() &#123;</span><br><span class="line">        release(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected boolean tryAcquire(int count) &#123;</span><br><span class="line">        if (compareAndSetState(0, 1)) &#123;</span><br><span class="line">            setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected boolean tryRelease(int arg) &#123;</span><br><span class="line">        if (getExclusiveOwnerThread() == Thread.currentThread()) &#123;</span><br><span class="line">            setExclusiveOwnerThread(null);</span><br><span class="line">            setState(0);</span><br><span class="line">            return true;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            throw new RuntimeException(&quot;不是当前线程占有的锁，不能释放锁&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们用0表示锁未被占用，1表示锁已经被占用</p>
+<p>加锁的方法tryAcquire就是简单的把state从0设置到1，成功后记录当前的线程。<br>释放锁的方法tryRelease就是简单的校验当前的线程，然后把state设置成0。</p>
+<p>lock和unlock方法只需要简单调用AQS提供的acquire方法和release方法即可。<br>Lock接口中还有其它的方法，我们不做那么复杂，就全空实现即可。</p>
+<p>测试：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private static volatile int count = 0;</span><br><span class="line">public static void main(String[] args) throws Exception&#123;</span><br><span class="line">    AQSLock aqsLock = new AQSLock();</span><br><span class="line">    CountDownLatch countDownLatch = new CountDownLatch(100);</span><br><span class="line">    for (int i = 0; i &lt; 100; i++) &#123;</span><br><span class="line">        new Thread() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                for (int j = 0; j &lt; 100000; j++) &#123;</span><br><span class="line">                    aqsLock.lock();</span><br><span class="line">                    count++;</span><br><span class="line">                    aqsLock.unlock();</span><br><span class="line">                &#125;</span><br><span class="line">                countDownLatch.countDown();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br><span class="line">    countDownLatch.await();</span><br><span class="line">    System.out.println(count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动100个线程，每个线程都对同一个count变量做100000次++操作，如果不加锁，最后输出的count肯定不会等于10000000，使用AQSLock加上锁之后，结果为10000000，说明我们实现的锁是可以通过正常使用的。</p>
+<h2 id="四-其它内容"><a href="#四-其它内容" class="headerlink" title="四 其它内容"></a>四 其它内容</h2><h4 id="4-1-tryAcquireShared和tryReleaseShared方法"><a href="#4-1-tryAcquireShared和tryReleaseShared方法" class="headerlink" title="4.1 tryAcquireShared和tryReleaseShared方法"></a>4.1 tryAcquireShared和tryReleaseShared方法</h4><p>这两个方法是为了方便实现读写锁用的，如果子类实现的锁有区分独占锁和共享锁的话，那么tryAcquireShared和tryReleaseShared就需要实现了获取/释放共享锁的逻辑。而原来的tryAcquire和tryRelease需要实现获取独占锁的逻辑。</p>
+<p>相应的，还有一个isHeldExclusively方法需要子类实现，这个方法返回当前是否有线程获取了独占锁。</p>
+<p>我们实现的AQSLock由于没有分独占锁和共享锁，所以不需要重写这些方法。</p>
+<h4 id="4-2-等待队列"><a href="#4-2-等待队列" class="headerlink" title="4.2 等待队列"></a>4.2 等待队列</h4><p>等待队列的类型如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static final class Node &#123;</span><br><span class="line">    volatile int waitStatus;</span><br><span class="line">    volatile Node prev;</span><br><span class="line">    volatile Node next;</span><br><span class="line">    volatile Thread thread;</span><br><span class="line">    Node nextWaiter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在AQS中，持有队列头尾节点的引用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private transient volatile Node head;</span><br><span class="line">private transient volatile Node tail;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>waitStatus字段：这个字段表示当前节点的状态，节点的操作也可能存在并发问题，例如节点需要取消等待，需要移动到Condition中等，这个字段是用于控制节点操作的并发的。</li>
+<li>nextWaiter字段：这个字段是用在Condition上的，Condtion中也有一个队列，这里不多说，后面学习Condtion时再研究。</li>
+</ul>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/07/31/javanio9/">
+        <span class="nav-arrow">← </span>
+        
+          Java NIO（九）tcp粘包拆包及ByteToMessageDecoder
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-什么是AQS"><span class="toc-nav-text">一 什么是AQS</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-AQS锁的核心字段及核心流程"><span class="toc-nav-text">二 AQS锁的核心字段及核心流程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-使用AQS实现一把锁"><span class="toc-nav-text">三 使用AQS实现一把锁</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#四-其它内容"><span class="toc-nav-text">四 其它内容</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-1-tryAcquireShared和tryReleaseShared方法"><span class="toc-nav-text">4.1 tryAcquireShared和tryReleaseShared方法</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-2-等待队列"><span class="toc-nav-text">4.2 等待队列</span></a></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2019/08/02/javaconcurrent01/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "并发包源码学习（一）AQS锁",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

@@ -132,6 +132,29 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/2018/06/14/ConcurrentHashMap/">ConcurrentHashMap源码解析</a>
+      </h2>
+      <p class="article-date">June 14, 2018</p>
+      
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 1.7版本的实现方式
+采用分段锁机制，底层有两个对象，一个是Segment对象，另一个是HashEntry对象
+一个Segment就是一把锁，它继承自ReentrantLock，每个Segment锁住若干个桶(不一定是一个)。
+一个HashEntry是一个链表，里面包含Key-Value ...
+        
+      </div>
+      <a class="more" href="/2018/06/14/ConcurrentHashMap/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/2017/04/07/javacoll/">java 集合框架梳理</a>
       </h2>
       <p class="article-date">April 7, 2017</p>

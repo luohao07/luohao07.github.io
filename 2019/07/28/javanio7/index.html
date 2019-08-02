@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>JavaNIO（七）ChannelPipeline和ChannelHandler解析</h2>
   <p class="post-date">2019-07-28</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-ChannelHandlerContext和ChannelHandler"><a href="#一-ChannelHandlerContext和ChannelHandler" class="headerlink" title="一 ChannelHandlerContext和ChannelHandler"></a>一 ChannelHandlerContext和ChannelHandler</h2><p>在ChannelPipeline这一层，ChannelPipeline会把收到的事件交给ChannelHandler处理。</p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">JavaNIO（七）ChannelPipeline和ChannelHandler解析
+      </p>
+      <p class="article-date" style="text-align: right">July 28, 2019</p>
+      <hr />
+      <h2 id="一-ChannelHandlerContext和ChannelHandler"><a href="#一-ChannelHandlerContext和ChannelHandler" class="headerlink" title="一 ChannelHandlerContext和ChannelHandler"></a>一 ChannelHandlerContext和ChannelHandler</h2><p>在ChannelPipeline这一层，ChannelPipeline会把收到的事件交给ChannelHandler处理。</p>
 <p>在外部，我们可以向ChannelPipeline中添加ChannelHandler处理器，但是添加到Pipeline中后，会被包装成一个ChannelHandlerContext对象：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final ChannelPipeline addLast(EventExecutorGroup group, String name, ChannelHandler handler) &#123;</span><br><span class="line">        newCtx = newContext(group, filterName(name, handler), handler);</span><br><span class="line">        addLast0(newCtx);</span><br><span class="line">        //...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -187,7 +192,8 @@
 
 <p>找到后又调用invokeChannelRead触发下一个ChannelHandler的channelRead方法。这就回到了最开始的地方。</p>
 <p>一直这样循环处理，直到所有的ChannelHandler处理完毕。</p>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">

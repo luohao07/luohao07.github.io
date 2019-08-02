@@ -129,17 +129,22 @@
 </header>
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
-<div id="article-banner">
+<!-- <div id="article-banner" style="display: none">
   <h2>Java NIO（一）select 和 epoll底层实现原理</h2>
   <p class="post-date">2019-07-19</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
-</div>
-<main class="app-body flex-box">
+</div> -->
+<main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
-  <article class="post-article">
-    <section class="markdown-content"><h2 id="一-内核接受网卡流量的整个流程"><a href="#一-内核接受网卡流量的整个流程" class="headerlink" title="一 内核接受网卡流量的整个流程"></a>一 内核接受网卡流量的整个流程</h2><p>预备知识：</p>
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">Java NIO（一）select 和 epoll底层实现原理
+      </p>
+      <p class="article-date" style="text-align: right">July 19, 2019</p>
+      <hr />
+      <h2 id="一-内核接受网卡流量的整个流程"><a href="#一-内核接受网卡流量的整个流程" class="headerlink" title="一 内核接受网卡流量的整个流程"></a>一 内核接受网卡流量的整个流程</h2><p>预备知识：</p>
 <ul>
 <li>网络编程的核心对象是socket，当创建socket时在底层会创建一个由文件系统管理的socket对象。这个对象包括了发送缓冲区，接收缓冲区，<strong>等待队列</strong>。</li>
 <li>recv函数用于从<strong>某一个socket</strong>中接受流量，但是这个函数在被调用入进程会一直处于阻塞状态，直到从该socket收到数据为止。</li>
@@ -177,7 +182,8 @@
 <li>除了第一次外，epoll不需操作所有socket对象的等待队列，只需要操作eventpoll的等待队列即可</li>
 <li>进程被唤醒后，不需要遍历即可直接知道哪些socket准备好了。</li>
 </ul>
-</section>
+
+    </section>
     <!-- Tags START -->
     
       <div class="tags">
