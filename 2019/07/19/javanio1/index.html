@@ -136,6 +136,14 @@
     <a href="javascript:;"></a>
   </div>
 </div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
 <main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
   <article class="post-article" style="margin-top: 60px">
@@ -201,10 +209,10 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2018/09/21/concurrent/">
+      <a class="nav-left" href="/2018/12/07/javaconcurrent02/">
         <span class="nav-arrow">← </span>
         
-          并发编程总结
+          并发包源码（二）ReentrantLock
         
       </a>
     
@@ -328,6 +336,14 @@
   </script>
 
 
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
 
 
     <div class="scroll-top">

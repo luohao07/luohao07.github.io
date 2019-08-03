@@ -131,21 +131,29 @@
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
 <!-- <div id="article-banner" style="display: none">
   <h2>并发包源码学习（一）AQS锁</h2>
-  <p class="post-date">2019-08-02</p>
+  <p class="post-date">2018-12-02</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
 </div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
 <main class="app-body flex-box" id="article-page-tag">
   <!-- Article START -->
   <article class="post-article" style="margin-top: 60px">
     <section class="markdown-content">
       <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">并发包源码学习（一）AQS锁
       </p>
-      <p class="article-date" style="text-align: right">August 2, 2019</p>
+      <p class="article-date" style="text-align: right">December 2, 2018</p>
       <hr />
       <h2 id="一-什么是AQS"><a href="#一-什么是AQS" class="headerlink" title="一 什么是AQS"></a>一 什么是AQS</h2><p>AQS即AbstractQueuedSynchronizer，在Java并发包中的一个基础类，并发包中的所有锁相关类，如ReentrantLock，ReentrantReadWriteLock，Semaphone等都是基于AQS锁来实现的。</p>
-<p>先放张简单点的图，这张图以后会再补充的<br><img src="/imgs/7808098-b4bc54fe8e786857.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/500" alt></p>
+<p>先放张简单点的图，这张图以后会再补充的<br><img src="https://upload-images.jianshu.io/upload_images/7808098-b4bc54fe8e786857.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/500" alt></p>
 <p>所以说AQS锁虽然是一个抽象类，但是它在并发包中真的是有举足轻重的地位。</p>
 <h2 id="二-AQS锁的核心字段及核心流程"><a href="#二-AQS锁的核心字段及核心流程" class="headerlink" title="二 AQS锁的核心字段及核心流程"></a>二 AQS锁的核心字段及核心流程</h2><ul>
 <li>state：表示锁的状态，不同的子类可以有不同的约定，如ReentrantLock规定state = 0 表示没有线程占用锁，state &gt; 0 表示有线程占有锁</li>
@@ -157,7 +165,7 @@
 <li>当线程A调用acquire()方法获取锁时，会先对state字段做一个CAS操作，如把state从0设置到1。如果CAS操作成功，表示获取锁成功，线程继续执行后续</li>
 <li>如果CAS操作失败了，意味着有其他线程已经占有锁了（假定是线程B占有了锁），这时候会把线程A加入到等待队列中</li>
 <li>当线程B调用release()方法释放锁时，会把state字段重新设置为0，成功之后会唤醒等待队列的头节点A，并且还会把头节点从队列中移除</li>
-<li>线程A被唤醒后会重试acquire()方法获取锁</li>
+<li>线程A被唤醒后会重试acquire()方法获取锁，如果获取成功，则会把自己从等待队列中移除，否则会继续等待下去</li>
 </ul>
 <p>核心方法： </p>
 <ul>
@@ -173,28 +181,40 @@
 </li>
 </ul>
 <h2 id="三-使用AQS实现一把锁"><a href="#三-使用AQS实现一把锁" class="headerlink" title="三 使用AQS实现一把锁"></a>三 使用AQS实现一把锁</h2><p>代码非常简单，写一个类，继承AbstractQueuedSynchronizer，同时由于它是一把锁，所以我们还需要实现Lock接口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class AQSLock extends AbstractQueuedSynchronizer implements Lock &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void lock() &#123;</span><br><span class="line">        acquire(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void unlock() &#123;</span><br><span class="line">        release(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected boolean tryAcquire(int count) &#123;</span><br><span class="line">        if (compareAndSetState(0, 1)) &#123;</span><br><span class="line">            setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected boolean tryRelease(int arg) &#123;</span><br><span class="line">        if (getExclusiveOwnerThread() == Thread.currentThread()) &#123;</span><br><span class="line">            setExclusiveOwnerThread(null);</span><br><span class="line">            setState(0);</span><br><span class="line">            return true;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            throw new RuntimeException(&quot;不是当前线程占有的锁，不能释放锁&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class AQSLock extends AbstractQueuedSynchronizer implements Lock &#123;</span><br><span class="line">    private Thread thread;</span><br><span class="line">    </span><br><span class="line">    @Override</span><br><span class="line">    public void lock() &#123;</span><br><span class="line">        acquire(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void unlock() &#123;</span><br><span class="line">        release(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected boolean tryAcquire(int count) &#123;</span><br><span class="line">        if (compareAndSetState(0, 1)) &#123;</span><br><span class="line">           thread = Thread.currentThread();</span><br><span class="line">           return true;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected boolean tryRelease(int arg) &#123;</span><br><span class="line">        if (thread == Thread.currentThread()) &#123;</span><br><span class="line">            setState(0);</span><br><span class="line">            return true;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            throw new RuntimeException(&quot;不是当前线程占有的锁，不能释放锁&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
 <p>我们用0表示锁未被占用，1表示锁已经被占用</p>
 <p>加锁的方法tryAcquire就是简单的把state从0设置到1，成功后记录当前的线程。<br>释放锁的方法tryRelease就是简单的校验当前的线程，然后把state设置成0。</p>
 <p>lock和unlock方法只需要简单调用AQS提供的acquire方法和release方法即可。<br>Lock接口中还有其它的方法，我们不做那么复杂，就全空实现即可。</p>
-<p>测试：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private static volatile int count = 0;</span><br><span class="line">public static void main(String[] args) throws Exception&#123;</span><br><span class="line">    AQSLock aqsLock = new AQSLock();</span><br><span class="line">    CountDownLatch countDownLatch = new CountDownLatch(100);</span><br><span class="line">    for (int i = 0; i &lt; 100; i++) &#123;</span><br><span class="line">        new Thread() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                for (int j = 0; j &lt; 100000; j++) &#123;</span><br><span class="line">                    aqsLock.lock();</span><br><span class="line">                    count++;</span><br><span class="line">                    aqsLock.unlock();</span><br><span class="line">                &#125;</span><br><span class="line">                countDownLatch.countDown();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br><span class="line">    countDownLatch.await();</span><br><span class="line">    System.out.println(count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>启动100个线程，每个线程都对同一个count变量做100000次++操作，如果不加锁，最后输出的count肯定不会等于10000000，使用AQSLock加上锁之后，结果为10000000，说明我们实现的锁是可以通过正常使用的。</p>
 <h2 id="四-其它内容"><a href="#四-其它内容" class="headerlink" title="四 其它内容"></a>四 其它内容</h2><h4 id="4-1-tryAcquireShared和tryReleaseShared方法"><a href="#4-1-tryAcquireShared和tryReleaseShared方法" class="headerlink" title="4.1 tryAcquireShared和tryReleaseShared方法"></a>4.1 tryAcquireShared和tryReleaseShared方法</h4><p>这两个方法是为了方便实现读写锁用的，如果子类实现的锁有区分独占锁和共享锁的话，那么tryAcquireShared和tryReleaseShared就需要实现了获取/释放共享锁的逻辑。而原来的tryAcquire和tryRelease需要实现获取独占锁的逻辑。</p>
 <p>相应的，还有一个isHeldExclusively方法需要子类实现，这个方法返回当前是否有线程获取了独占锁。</p>
 <p>我们实现的AQSLock由于没有分独占锁和共享锁，所以不需要重写这些方法。</p>
 <h4 id="4-2-等待队列"><a href="#4-2-等待队列" class="headerlink" title="4.2 等待队列"></a>4.2 等待队列</h4><p>等待队列的类型如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static final class Node &#123;</span><br><span class="line">    volatile int waitStatus;</span><br><span class="line">    volatile Node prev;</span><br><span class="line">    volatile Node next;</span><br><span class="line">    volatile Thread thread;</span><br><span class="line">    Node nextWaiter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>在AQS中，持有队列头尾节点的引用：</p>
+<p>在AQS中，持有队列头尾节点的引用:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private transient volatile Node head;</span><br><span class="line">private transient volatile Node tail;</span><br></pre></td></tr></table></figure>
 
+<p>这里需要注意的是，头节点head只是一个空节点，它没有记录真正等待的线程。但是尾节点却是一个真实的节点：<br><img src="https://upload-images.jianshu.io/upload_images/7808098-830e3b48a41b7c9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/500" alt="头尾节点"></p>
 <ul>
 <li>waitStatus字段：这个字段表示当前节点的状态，节点的操作也可能存在并发问题，例如节点需要取消等待，需要移动到Condition中等，这个字段是用于控制节点操作的并发的。</li>
 <li>nextWaiter字段：这个字段是用在Condition上的，Condtion中也有一个队列，这里不多说，后面学习Condtion时再研究。</li>
 </ul>
+<h4 id="4-3-实现可中断锁等候"><a href="#4-3-实现可中断锁等候" class="headerlink" title="4.3 实现可中断锁等候"></a>4.3 实现可中断锁等候</h4><p>acquireInterruptibly方法可实现可中断锁等候，即假如线程获取锁失败被阻塞住了，允许其他线程中断此线程。</p>
+<p>实现原理是：在阻塞线程时，使用的是LockSupport.park()方法，这是一个navite方法，并且它本身是响应中断的，即其他线程也可以使用中断的方式唤醒当前线程，与使用LockSupport.unpark()的效果是一样的</p>
+<p>当线程从LockSupport.park()中被唤醒后，它会检测一下是否有中断标识，以此来判断自己是被中断唤醒的还是被unpark()方法唤醒的，如果是由中断唤醒的，则会抛出一个中断异常。</p>
+<h4 id="4-4-时间锁等候"><a href="#4-4-时间锁等候" class="headerlink" title="4.4 时间锁等候"></a>4.4 时间锁等候</h4><p>tryAcquireNanos方法实现了时间锁等候，即允许线程最多阻塞指定的时间。</p>
+<p>实现方式是：每次阻塞线程时，使用的是LockSupport.parkNanos()方法，这个方法可以阻塞指定时长的时间。当线程被唤醒后，会再次尝试获取锁，获取失败还需要再确认一次是否已经等够了时间（因为阻塞的时间是不精确的，可以我们期望的是阻塞1s，但是实际上998ms就已经返回了） ，如果确认已经等够了，则返回。如果没有等够，则会进入下一次的阻塞。但是如果剩余的等待时间不足1ms，则不会进入阻塞，反而会进入一个快速的自旋阶段。</p>
+<p>流程图如下（mermaid代码画的，凑合看吧）</p>
+<pre class="mermaid">graph LR
+start[调用acquireInterruptibly] --> conditionA{尝试获取锁}
+conditionA -- NO --> conditionC{剩余时间是否大于0ms}
+conditionC -- YES --> conditionB{剩余时间是否大于1ms}
+conditionC -- NO --> printC[返回失败]
+conditionB -- YES --> printB[阻塞住]
+printB -- 时间达到唤醒 --> conditionA
+conditionB -- NO --> conditionA
+conditionA -- YES --> printA[返回成功]</pre>
 
     </section>
     <!-- Tags START -->
@@ -214,13 +234,20 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2019/07/31/javanio9/">
+      <a class="nav-left" href="/2018/09/21/concurrent/">
         <span class="nav-arrow">← </span>
         
-          Java NIO（九）tcp粘包拆包及ByteToMessageDecoder
+          并发编程总结
         
       </a>
     
+    
+      <a class="nav-right" href="/2018/12/07/javaconcurrent02/">
+        
+          并发包源码（二）ReentrantLock
+        
+        <span class="nav-arrow"> →</span>
+      </a>
     
   </div>
 
@@ -244,7 +271,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-什么是AQS"><span class="toc-nav-text">一 什么是AQS</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-AQS锁的核心字段及核心流程"><span class="toc-nav-text">二 AQS锁的核心字段及核心流程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-使用AQS实现一把锁"><span class="toc-nav-text">三 使用AQS实现一把锁</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#四-其它内容"><span class="toc-nav-text">四 其它内容</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-1-tryAcquireShared和tryReleaseShared方法"><span class="toc-nav-text">4.1 tryAcquireShared和tryReleaseShared方法</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-2-等待队列"><span class="toc-nav-text">4.2 等待队列</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-什么是AQS"><span class="toc-nav-text">一 什么是AQS</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-AQS锁的核心字段及核心流程"><span class="toc-nav-text">二 AQS锁的核心字段及核心流程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-使用AQS实现一把锁"><span class="toc-nav-text">三 使用AQS实现一把锁</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#四-其它内容"><span class="toc-nav-text">四 其它内容</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-1-tryAcquireShared和tryReleaseShared方法"><span class="toc-nav-text">4.1 tryAcquireShared和tryReleaseShared方法</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-2-等待队列"><span class="toc-nav-text">4.2 等待队列</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-3-实现可中断锁等候"><span class="toc-nav-text">4.3 实现可中断锁等候</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-4-时间锁等候"><span class="toc-nav-text">4.4 时间锁等候</span></a></li></ol></li></ol></li></ol>
     
   </div>
 </aside>
@@ -254,7 +281,7 @@
 
 <script>
   (function () {
-    var url = 'http://www.luohao07.com/2019/08/02/javaconcurrent01/';
+    var url = 'http://www.luohao07.com/2018/12/02/javaconcurrent01/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -334,6 +361,14 @@
   </script>
 
 
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
 
 
     <div class="scroll-top">

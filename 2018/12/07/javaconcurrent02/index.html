@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      并发包源码（二）ReentrantLock | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    <script src="/js/gitment.js"></script>
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2>并发包源码（二）ReentrantLock</h2>
+  <p class="post-date">2018-12-07</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">并发包源码（二）ReentrantLock
+      </p>
+      <p class="article-date" style="text-align: right">December 7, 2018</p>
+      <hr />
+      <h2 id="一-ReentrantLock的特性"><a href="#一-ReentrantLock的特性" class="headerlink" title="一 ReentrantLock的特性"></a>一 ReentrantLock的特性</h2><ul>
+<li>支持重入：指的是同一个线程多次lock()可以成功，并且lock多少次后续就需要unlock才能释放锁</li>
+<li>支持公平锁和非公平锁：公平锁是指先调用lock的线程后续一定会先拿到锁，非公平则没有这种要求</li>
+<li>时间锁等候：即支持带时间参数的lock，线程最多只会阻塞一定时间，而不会一直等下去</li>
+<li>可中断锁等候：即lock被阻塞时可以被其他线程中断</li>
+<li>需要手动释放锁：一个lock必需要有一个unlock对应，异常时不会自动释放</li>
+</ul>
+<h2 id="二-实现"><a href="#二-实现" class="headerlink" title="二 实现"></a>二 实现</h2><p>ReentrantLock基于AQS实现，基本AQS实现一种锁至少要做以下三件事：</p>
+<ul>
+<li><p>定义state各种值的意义</p>
+</li>
+<li><p>重写tryAcquire方法</p>
+</li>
+<li><p>重写tryRelease方法</p>
+<h4 id="2-1-定义state各种值的意义"><a href="#2-1-定义state各种值的意义" class="headerlink" title="2.1 定义state各种值的意义"></a>2.1 定义state各种值的意义</h4><p>ReentrantLock中对于state的各种值的意义如下：</p>
+</li>
+<li><p>state = 0 ：表示没有线程占有锁</p>
+</li>
+<li><p>state &gt; 0 ： 表示有线程占有锁，具体的值即为同一个线程重入锁的次数</p>
+</li>
+<li><p>state &lt; 0 ：不会存在这种情况</p>
+</li>
+</ul>
+<h4 id="2-2-重写tryAcquire方法"><a href="#2-2-重写tryAcquire方法" class="headerlink" title="2.2 重写tryAcquire方法"></a>2.2 重写tryAcquire方法</h4><p>ReentrantLock中重写的tryAcquire方法的逻辑大致如下：</p>
+<ul>
+<li>步骤一：如果state==0，说明没有线程占有锁，直接把state CAS为1，如果成功，则记录当前的线程，并返回true，如果不成功则返回false。</li>
+<li>步骤二：如果state!=0，说明已经有线程占有锁了，这种情况下只支持原来占有锁的线程重入，因此需要校验当前线程与步骤一中记录的线程是否一致，如果一致则state++，并返回true，否则返回false。</li>
+</ul>
+<blockquote>
+<p>这里回顾一下AQS的内容：AQS锁中的acquire方法会调用子类的tryAcquire方法，如果tryAcquire方法返回true，则说明线程获取锁成功，然后线程会继续执行，如果返回了false，则会把当前线程加到等待队列中去，同时还会把线程阻塞住</p>
+</blockquote>
+<p>ReentrantLock中包含公平锁和非公平锁两套实现，下面给出非公平锁的源码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">protected final boolean tryAcquire(int acquires) &#123;</span><br><span class="line">    return nonfairTryAcquire(acquires);</span><br><span class="line">&#125;</span><br><span class="line">final boolean nonfairTryAcquire(int acquires) &#123;</span><br><span class="line">    final Thread current = Thread.currentThread();</span><br><span class="line">    int c = getState();</span><br><span class="line">    if (c == 0) &#123;</span><br><span class="line">        if (compareAndSetState(0, acquires)) &#123;</span><br><span class="line">            setExclusiveOwnerThread(current);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    else if (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">        int nextc = c + acquires;</span><br><span class="line">        if (nextc &lt; 0) // overflow</span><br><span class="line">            throw new Error(&quot;Maximum lock count exceeded&quot;);</span><br><span class="line">        setState(nextc);</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-重写tryRelease方法"><a href="#2-3-重写tryRelease方法" class="headerlink" title="2.3 重写tryRelease方法"></a>2.3 重写tryRelease方法</h4><p>tryRelease方法的逻辑大概如下：</p>
+<ul>
+<li>判断：如果当前线程不是持有锁的线程，则抛出异常</li>
+<li>判断当前的state是否为1：如果是，说明需要完全释放锁，接下来会把原来记录的持有锁线程设置回null，然后返回true。如果不是，则说明当前的锁被重入了多次，只需要把state–，然后返回false即可</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">protected final boolean tryRelease(int releases) &#123;</span><br><span class="line">    int c = getState() - releases;</span><br><span class="line">    if (Thread.currentThread() != getExclusiveOwnerThread())</span><br><span class="line">        throw new IllegalMonitorStateException();</span><br><span class="line">    boolean free = false;</span><br><span class="line">    if (c == 0) &#123;</span><br><span class="line">        free = true;</span><br><span class="line">        setExclusiveOwnerThread(null);</span><br><span class="line">    &#125;</span><br><span class="line">    setState(c);</span><br><span class="line">    return free;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>回顾：AQS锁中的release方法会调用子类的tryRelease释放锁，如果tryRelease返回true，则说明释放成功，后续会唤醒等待队列的头节点，返回tryRelease返回false，则说明释放不成功，返回没有任何操作。</p>
+</blockquote>
+<p>ReentrantLock的实现其实很简单，基本比我们之前自定义的AQSLock也多不了多少内容。</p>
+<h2 id="三-如何实现重入"><a href="#三-如何实现重入" class="headerlink" title="三 如何实现重入"></a>三 如何实现重入</h2><p>实现重入其实上面就是答案了，使用state的具体值表示锁被重入的次数，被次lock时++，unlock时–，必需要减到0才真正释放锁。</p>
+<h2 id="四-公平锁和非公平锁"><a href="#四-公平锁和非公平锁" class="headerlink" title="四 公平锁和非公平锁"></a>四 公平锁和非公平锁</h2><p>公平锁：即保证先lock的线程一定先拿到锁，如ABC分别先后调用ReentrantLock#lock()获取同一把锁，如果是公平锁，则拿到锁的先后顺序一定是A -&gt; B -&gt; C，如果是非公平锁则不一定。</p>
+<p>在ReentrantLock的实现中，非公平锁与公平锁最大的区别在于：<strong>公平锁在获取锁之前要先判断等待队列是否为空，只有为空的情况下才能获取锁</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (!hasQueuedPredecessors() &amp;&amp;</span><br><span class="line">    compareAndSetState(0, acquires)) &#123;</span><br><span class="line">    setExclusiveOwnerThread(current);</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实公平锁也就是比非公平锁多了一个这样的判断hasQueuedPredecessors()</p>
+<p>还有一点小小的区别是：非公平锁的lock()方法会立即尝试CAS state字段获取一次锁，失败后才会走AQS的acquire方法的流程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">final void lock() &#123;</span><br><span class="line">    if (compareAndSetState(0, 1))</span><br><span class="line">        setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">    else</span><br><span class="line">        acquire(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>笔者认为之所以要这样实现，是为了尽量的减少上下文的切换，这里涉及到稍微深入一点的的非公平锁与公平锁的讨论，简单写一下：<br>非公平锁比公平锁快的原因在于它可以减少上下文的切换，设想一下AB两个线程对同一个锁做以下操作：</p>
+<ul>
+<li>步骤一：A线程lock()，获取到锁</li>
+<li>步骤二：B线程lock()，获取锁失败，被加入到等待队列</li>
+<li>步骤三：A线程释放锁，此时B线程会被唤醒，<strong>但是它只是进入到就绪状态，并不一定会马上被执行（大概率不会马上被执行）</strong></li>
+<li>步骤四：A线程再次lock，申请获取锁  </li>
+</ul>
+<p>假如使用的是公平锁，在步骤四A线程再次lock时，会发现等待队列中有一个B线程，这种情况下A线程不得不把CPU让出来，自己进入到阻塞状态，当B线程获取到锁执行完成并释放锁之后，又会切换到A线程执行。这种情况下会有两次上下文切换：A切换到B，然后B再切换到A</p>
+<p>假如使用的是非公平锁，在步骤四时A线程直接可以获取到锁，后续执行完之后再切换到B，只有一次上下文切换。</p>
+<p>实际上，有很多A线程的这种情况：释放锁之后马上又可能要获取锁，因此ReentrantLock的非公平锁在实现时会先快速CAS一次，因为这样可以尽量的让当前线程先于等待队列中的线程获取到锁，从而减少上下文切换的次数。</p>
+<h2 id="时间锁等候与可中断锁等候"><a href="#时间锁等候与可中断锁等候" class="headerlink" title="时间锁等候与可中断锁等候"></a>时间锁等候与可中断锁等候</h2><p>这一块都是直接由AQS实现的，ReentrantLock不用做任何内容，只需要简单调用一下AQS中的方法即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public void lockInterruptibly() throws InterruptedException &#123;</span><br><span class="line">    sync.acquireInterruptibly(1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public boolean tryLock(long timeout, TimeUnit unit)</span><br><span class="line">        throws InterruptedException &#123;</span><br><span class="line">    return sync.tryAcquireNanos(1, unit.toNanos(timeout));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/12/02/javaconcurrent01/">
+        <span class="nav-arrow">← </span>
+        
+          并发包源码学习（一）AQS锁
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/07/19/javanio1/">
+        
+          Java NIO（一）select 和 epoll底层实现原理
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-ReentrantLock的特性"><span class="toc-nav-text">一 ReentrantLock的特性</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-实现"><span class="toc-nav-text">二 实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-1-定义state各种值的意义"><span class="toc-nav-text">2.1 定义state各种值的意义</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-2-重写tryAcquire方法"><span class="toc-nav-text">2.2 重写tryAcquire方法</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-3-重写tryRelease方法"><span class="toc-nav-text">2.3 重写tryRelease方法</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-如何实现重入"><span class="toc-nav-text">三 如何实现重入</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#四-公平锁和非公平锁"><span class="toc-nav-text">四 公平锁和非公平锁</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#时间锁等候与可中断锁等候"><span class="toc-nav-text">时间锁等候与可中断锁等候</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2018/12/07/javaconcurrent02/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "并发包源码（二）ReentrantLock",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

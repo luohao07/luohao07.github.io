@@ -132,27 +132,6 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2019/08/02/javaconcurrent01/">并发包源码学习（一）AQS锁</a>
-      </h2>
-      <p class="article-date">August 2, 2019</p>
-      
-        
-  <a href="/tags#并发编程" >
-    <span class="tag-code">并发编程</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          一 什么是AQSAQS即AbstractQueuedSynchronizer，在Java并发包中的一个基础类，并发包中的所有锁相关类，如ReentrantLock，ReentrantReadWriteLock，Semaphone等都是基于AQS锁来实现的。
-先放张简单点的图，这张图以后会再补 ...
-        
-      </div>
-      <a class="more" href="/2019/08/02/javaconcurrent01/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/2019/07/31/javanio9/">Java NIO（九）tcp粘包拆包及ByteToMessageDecoder</a>
       </h2>
       <p class="article-date">July 31, 2019</p>
@@ -327,9 +306,9 @@ recv函数用于从某一个socket中接受流量，但是这个函数在被调�
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/09/21/concurrent/">并发编程总结</a>
+        <a href="/2018/12/07/javaconcurrent02/">并发包源码（二）ReentrantLock</a>
       </h2>
-      <p class="article-date">September 21, 2018</p>
+      <p class="article-date">December 7, 2018</p>
       
         
   <a href="/tags#并发编程" >
@@ -339,14 +318,34 @@ recv函数用于从某一个socket中接受流量，但是这个函数在被调�
       
       <div class="article-summary">
         
-          一 多线程基础1.1 线程的状态及其变更
-1.2涉及到的各种方法
-Thread.start()让线程进入就绪状态，不是立即执行
-Thread.yield()Thread类的静态方法，让当前线程放弃CPU时间，从运行中状态变为就绪状态（可能又马上被CPU执行了）
-Thread.join()在当 ...
+          一 ReentrantLock的特性
+支持重入：指的是同一个线程多次lock()可以成功，并且lock多少次后续就需要unlock才能释放锁
+支持公平锁和非公平锁：公平锁是指先调用lock的线程后续一定会先拿到锁，非公平则没有这种要求
+时间锁等候：即支持带时间参数的lock，线程最多只会阻塞 ...
         
       </div>
-      <a class="more" href="/2018/09/21/concurrent/">Read more</a>
+      <a class="more" href="/2018/12/07/javaconcurrent02/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/12/02/javaconcurrent01/">并发包源码学习（一）AQS锁</a>
+      </h2>
+      <p class="article-date">December 2, 2018</p>
+      
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 什么是AQSAQS即AbstractQueuedSynchronizer，在Java并发包中的一个基础类，并发包中的所有锁相关类，如ReentrantLock，ReentrantReadWriteLock，Semaphone等都是基于AQS锁来实现的。
+先放张简单点的图，这张图以后会再补 ...
+        
+      </div>
+      <a class="more" href="/2018/12/02/javaconcurrent01/">Read more</a>
     </article>
   
 
