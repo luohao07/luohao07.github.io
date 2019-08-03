@@ -30,7 +30,9 @@
         "position": "unset"
       });
       app.css("padding", "0px");
-      $('html, body').animate({ scrollTop: 60 }, 600)
+      if($('html, body').scrollTop() <= 200) {
+        $('html, body').animate({ scrollTop: 60 }, 600)
+      }
     }
     if (about) {
       $('.author').children().css(fade)
