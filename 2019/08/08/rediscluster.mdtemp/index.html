@@ -128,133 +128,196 @@
   </div>
 </header>
 
-    <div id="article-banner">
-  <h2>Archives</h2>
-  <p class="post-date">文章归档</p>
-</div>
-<main class="app-body" id="archives">
-  
-  
-  
-    <section class="time-section">
-  <h1 class="section-year">
-    2019
-  </h1>
-  <div class="section-list">
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2></h2>
+  <p class="post-date">2019-08-08</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">
+      </p>
+      <p class="article-date" style="text-align: right">August 8, 2019</p>
+      <hr />
+      <pre class="mermaid">graph TD 
+
+printM[主节点]
+printS1[从节点1]
+printS2[从节点2]
+printS3[从节点3]
+printST1[哨兵1]
+printST2[哨兵2]
+printST3[哨兵3]
+
+printS1 -- 复制 --> printM
+printS2 -- 复制 --> printM
+printS3 -- 复制 --> printM
+
+printST1 -- 监听 --> printM
+printST2 -- 监听 --> printM
+printST3 -- 监听 --> printM
+printST1 -- 监听 --> printS1
+printST2 -- 监听 --> printS1
+printST3 -- 监听 --> printS1
+printST1 -- 监听 --> printS2
+printST2 -- 监听 --> printS2
+printST3 -- 监听 --> printS2
+printST1 -- 监听 --> printS3
+printST2 -- 监听 --> printS3
+printST3 -- 监听 --> printS3</pre>
+
+    </section>
+    <!-- Tags START -->
     
+    <!-- Tags END -->
+    <!-- NAV START -->
     
-      <div class="section-list-item">
-        <a href="/2019/08/08/rediscluster.mdtemp/" class="archive-title"></a>
-        <p class="archive-date">08-08</p>
-      </div>
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <div class="section-list-item">
-        <a href="/2019/07/31/javanio9/" class="archive-title">Java NIO（九）tcp粘包拆包及ByteToMessageDecoder</a>
-        <p class="archive-date">07-31</p>
-      </div>
+      <a class="nav-left" href="/2019/07/31/javanio9/">
+        <span class="nav-arrow">← </span>
+        
+          Java NIO（九）tcp粘包拆包及ByteToMessageDecoder
+        
+      </a>
     
-      <div class="section-list-item">
-        <a href="/2019/07/29/javanio8/" class="archive-title">JavaNIO（八）ByteBuffer和ByteBuf解析</a>
-        <p class="archive-date">07-29</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2019/07/28/javanio7/" class="archive-title">JavaNIO（七）ChannelPipeline和ChannelHandler解析</a>
-        <p class="archive-date">07-28</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2019/07/27/javanio6/" class="archive-title">JavaNIO（六）Unsafe和Channel解析</a>
-        <p class="archive-date">07-27</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2019/07/26/javanio5/" class="archive-title">Java NIO（五）Netty线程模型及EventLoop源码解析</a>
-        <p class="archive-date">07-26</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2019/07/23/javanio4/" class="archive-title">Java NIO（四）Netty核心组件及一次事件的处理流程</a>
-        <p class="archive-date">07-23</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2019/07/20/javanio2/" class="archive-title">Java NIO（二）NIO入门实例</a>
-        <p class="archive-date">07-20</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2019/07/19/javanio1/" class="archive-title">Java NIO（一）select 和 epoll底层实现原理</a>
-        <p class="archive-date">07-19</p>
-      </div>
     
   </div>
-</section>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
   
-    <section class="time-section">
-  <h1 class="section-year">
-    2018
-  </h1>
-  <div class="section-list">
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
     
-    
-      <div class="section-list-item">
-        <a href="/2018/12/11/javaconcurrent03/" class="archive-title">并发包学习 读写锁—ReentrantReadWriteLock</a>
-        <p class="archive-date">12-11</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/12/07/javaconcurrent02/" class="archive-title">并发包学习 ReentrantLock</a>
-        <p class="archive-date">12-07</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/12/02/javaconcurrent01/" class="archive-title">并发包学习 AQS锁 - AbstractQueuedSynchronizer</a>
-        <p class="archive-date">12-02</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/09/21/concurrent/" class="archive-title">并发编程总结</a>
-        <p class="archive-date">09-21</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/06/14/ConcurrentHashMap/" class="archive-title">ConcurrentHashMap源码解析</a>
-        <p class="archive-date">06-14</p>
-      </div>
-    
-      <div class="section-list-item">
-        <a href="/2018/06/12/redis01/" class="archive-title">《redis入门指南 》读书笔记</a>
-        <p class="archive-date">06-12</p>
-      </div>
+      <ol class="nav">none</ol>
     
   </div>
-</section>
+</aside>
   
-    <section class="time-section">
-  <h1 class="section-year">
-    2017
-  </h1>
-  <div class="section-list">
-    
-    
-      <div class="section-list-item">
-        <a href="/2017/04/07/javacoll/" class="archive-title">java 集合框架梳理</a>
-        <p class="archive-date">04-07</p>
-      </div>
-    
-  </div>
-</section>
-  
+  <!-- Catalog END -->
 </main>
 
 <script>
   (function () {
-    var url = 'http://www.luohao07.com/archives/2019/07/index.html';
-    $('#article-banner').geopattern(url);
-    $('.header').removeClass('fixed-header');
+    var url = 'http://www.luohao07.com/2019/08/08/rediscluster.mdtemp/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
   })();
 </script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>

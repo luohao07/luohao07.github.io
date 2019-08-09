@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      《redis入门指南 》读书笔记 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    <script src="/js/gitment.js"></script>
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2>《redis入门指南 》读书笔记</h2>
+  <p class="post-date">2018-06-12</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">《redis入门指南 》读书笔记
+      </p>
+      <p class="article-date" style="text-align: right">June 12, 2018</p>
+      <hr />
+      <h2 id="一-命令"><a href="#一-命令" class="headerlink" title="一 命令"></a>一 命令</h2><h4 id="1-1-字符串相关"><a href="#1-1-字符串相关" class="headerlink" title="1.1 字符串相关"></a>1.1 字符串相关</h4><ul>
+<li>原子加减：INCR，DECR，INCRBY，DECRBY，会返回操作后的值</li>
+<li>按位操作：GETBIT，SETBIT，BITOP（按位运算），BITCOUNT（统计位是1的个数）</li>
+<li>批量操作：MGET，MSET</li>
+<li>添加至末尾：APPEND</li>
+<li>计算长度：STRLEN，键不存在会返回0</li>
+<li>仅插入： <code>SETNX</code>，如果key已经存在，不会更新。命令成功返回1，不成功返回0</li>
+</ul>
+<blockquote>
+<p>可保存二进制数据，最大长度为512M</p>
+</blockquote>
+<h4 id="1-2-散列相关"><a href="#1-2-散列相关" class="headerlink" title="1.2 散列相关"></a>1.2 散列相关</h4><ul>
+<li>字段可增删：SET类命令可更新和插入，原来存在返回1，不存在返回0</li>
+<li>批量操作：HMSET HMGET HGETALL</li>
+<li>判断字段是否存在：HEXISTS，存在返回1，不存在返回0</li>
+<li>仅插入：HSETNX，如果字段存在不做任何操作</li>
+<li>原子操作：HINCRBY，没有DECR之类的命令</li>
+</ul>
+<p>HKEYS/HVALS：仅获取字段名/字段值。HELN：获取字段数量</p>
+<h4 id="1-3-列表类型"><a href="#1-3-列表类型" class="headerlink" title="1.3 列表类型"></a>1.3 列表类型</h4><p>内部使用双向列表，只能保存字符串（2^32 - 1个元素）</p>
+<ul>
+<li><code>LPUSH/RPUSH</code>：左插入/右插入 </li>
+<li><code>LPOP/RPOP</code>：左弹出/右弹出 </li>
+<li><code>LRANGE</code>：范围读取，只读取不弹出，正数表示从左边数，负数表示从右边数，如<code>LRANGE nums 0 -1</code>，表示从左边第0位读到右边第1位，也就是全部读取</li>
+<li><code>LLEN</code>：获取长度，不存在时返回0</li>
+<li><code>LREM</code>： 删除指定值，可指定个数，个数为负时从右边开始删除</li>
+<li><code>LINDEX</code>： 返回指定索引的元素，相当于数组使用</li>
+<li><code>LTRIM</code>： 只保留列表的指定片断 </li>
+<li><code>RPOPLPUSH</code>：可操作两个队列，从第一个队列的右边弹出元素，然后插入到第二个队列的左边，整个操作是原子的</li>
+<li><code>LINSERT</code>：插入到指定元素前/后（依赖参数）</li>
+</ul>
+<h4 id="1-4-集合类型"><a href="#1-4-集合类型" class="headerlink" title="1.4 集合类型"></a>1.4 集合类型</h4><p>支持交并差操作，支持随机读取，最多可以有$2^{31} - 1$个元素</p>
+<ul>
+<li><code>SADD</code>：添加，批量接口，返回成功的个数</li>
+<li><code>SREM</code>：删除，批量接口，返回成功的个数</li>
+<li><code>SMEMBERS</code>：返回集合中的所有元素</li>
+<li><code>SISMEMBER</code>：判断元素是否属于集合  </li>
+<li><code>SDIFF/SDIFFSTORE</code>：算集合差集，即A - B，SDIFFSTORE会把结果保存在新的key中</li>
+<li><code>SINTER/SINTERSTORE</code>：算集合的交集，即A交B</li>
+<li><code>SUNION/SUNIONSTORE</code>：求并集，即A并B</li>
+<li><code>SCARD</code>：统计元素的个数</li>
+<li><code>SRANDMEMBER</code>：从集合中随机获取元素，个数为正数时不会随机出相同元素，负数时可能相同。桶链结构，先随机桶再随机元素。</li>
+<li><code>SPOP</code>：随机弹出一个元素</li>
+</ul>
+<h4 id="1-5-有序集合"><a href="#1-5-有序集合" class="headerlink" title="1.5 有序集合"></a>1.5 有序集合</h4><p>内部使用散列表+跳跃表实现，在集合的基础上为每一个元素关联一个分数score</p>
+<ul>
+<li><code>ZADD</code>: 添加</li>
+<li><code>ZSCORE</code>: 获取分数</li>
+<li><code>ZRANGE</code>: 按照分数从小到大的顺序返回分数排名位于指定区间的元素，包含两端，负数代表从右边查找</li>
+<li><code>ZREVRANGE</code>: 与<code>ZRANGE</code>类似，但是它是从大到小的顺序返回的</li>
+<li><code>ZRANGEBYSCORE</code>: 与<code>ZRANGE</code>类似，但是它是基于分数的范围的</li>
+<li><code>ZINCRBY</code>: 增加分数，返回增加后的分数</li>
+<li><code>ZCARD</code>: 统计所有数量</li>
+<li><code>ZCOUNT</code>: 统计分数范围内的数量</li>
+<li><code>ZREMREANGEBYRANK</code>: 按照排名范围删除元素</li>
+<li><code>ZREMREANGEBYSCORE</code>: 按照分数范围删除元素</li>
+<li><code>ZRANK</code>/<code>ZREVRANK</code>: 获取元素的排名/倒排名</li>
+<li><code>ZINTERSTORE</code>/<code>ZUNIONSTORE</code>: 求并集</li>
+</ul>
+<h2 id="二-事务"><a href="#二-事务" class="headerlink" title="二 事务"></a>二 事务</h2><ul>
+<li><code>MULTI</code> 开启事务</li>
+<li><code>EXEC</code> 提交事务</li>
+<li>没有事务回滚的功能</li>
+</ul>
+<blockquote>
+<p>事务中有错误语法时事务无法提交成功，事务中有运行错误时正确的部分语句会提交成功</p>
+</blockquote>
+<p><code>WATCH</code>/<code>UNWATCH</code>:  监控/取消监控key，有点像乐观锁，如果被监控的key的值更改了，那么后续的事务就不会被执行。</p>
+<h2 id="三-过期时间"><a href="#三-过期时间" class="headerlink" title="三 过期时间"></a>三 过期时间</h2><p><code>EXPIRE</code> ： 设置过期时间，如果键已经设置了过期时间，则会刷新<br><code>TTL</code>：返回剩余过期时间，单位秒，键不存在时返回-1<br><code>PERSIST</code>：取消设置的过期时间<br><code>EXPIREAT</code>：设置key存活的截止时间，单位秒<br><code>PEXPIREAT</code>：设置key存活的截止时间，单位毫秒</p>
+<p><code>maxmemory</code>: 这是一个参数，设置最大使用内存<br><code>maxmemory-policy</code>: 这是一个参数，用于设置缓存淘汰规则：</p>
+<ul>
+<li>volatile-lru：限时数据中，使用LRU算法删除一个键</li>
+<li>volatile-ttl： 限时数据中，删除最快过期的键</li>
+<li>volatile-random ：限时数据中，随机删除一个键</li>
+<li>allkeys-lru：所有数据中，使用LRU算法删除一个键</li>
+<li>allkeys-random： 所有数据中，随机删除一个键</li>
+<li>noeviction：不删除键，返回错误</li>
+</ul>
+<h2 id="四-实现队列"><a href="#四-实现队列" class="headerlink" title="四 实现队列"></a>四 实现队列</h2><p><code>BRPOP</code> : 阻塞式右弹出，可以用于优先级队列<br>发布订阅：PUBLISH SUBSCRIBE UNSUBSCRIBE </p>
+<h2 id="五-数据结构及内存优化"><a href="#五-数据结构及内存优化" class="headerlink" title="五 数据结构及内存优化"></a>五 数据结构及内存优化</h2><p><code>OBJECT ENCODING</code>:  可以查看内部编码类型<br>redis中数据使用的是<code>redisObject</code>来保存的，还有五种数据结构：<code>ziplist</code>, <code>hashtable</code>, <code>linkedlist</code>, <code>intset</code>, <code>skiplist</code></p>
+<h4 id="5-1-键值对数据类型redisObject"><a href="#5-1-键值对数据类型redisObject" class="headerlink" title="5.1 键值对数据类型redisObject"></a>5.1 键值对数据类型redisObject</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct redisObject &#123;</span><br><span class="line">    type,       类型</span><br><span class="line">    notused,    </span><br><span class="line">    encoding,   数据结构</span><br><span class="line">    lru,        </span><br><span class="line">    refcount,</span><br><span class="line">    *ptr        数据</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-2-ziplist"><a href="#5-2-ziplist" class="headerlink" title="5.2 ziplist"></a>5.2 ziplist</h4><p><code>ziplist</code>分为 <code>头-体</code> 两部分，头部数据包含：</p>
+<ul>
+<li><code>zlbytes</code>: 整个结构体占用的空间</li>
+<li><code>zltail</code>: 到最后一个元素的偏移量，方便从后面查找</li>
+<li><code>zllen</code>: 元素的数量</li>
+</ul>
+<p>中间元素的数据结构，有四个字段：</p>
+<ul>
+<li>前一个元素的大小：方便倒顺查找</li>
+<li>当前元素的编码类型</li>
+<li>当前元素的大小：通过这个值可以定位到下一个元素的位置</li>
+<li>当前元素的内容</li>
+</ul>
+<p>此外ziplist用一个单字节的值<code>zlend = 255</code>来标记结尾<br><img src="/imgs/7808098-002aef52c9b93329.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="ziplist"></p>
+<h4 id="5-3-hashtable"><a href="#5-3-hashtable" class="headerlink" title="5.3 hashtable"></a>5.3 hashtable</h4><p>跟Java中的HashMap一样，使用的是桶链结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">typedef struct dictht &#123;</span><br><span class="line">    dictEntry **table;</span><br><span class="line">    unsigned long size;</span><br><span class="line">    unsigned long sizemask;</span><br><span class="line">    unsigned long used;</span><br><span class="line">&#125; dictht;</span><br></pre></td></tr></table></figure>
+
+<p>table是一个数组，dictEntry是一个包含键值信息的链表</p>
+<h4 id="5-4-链表linkedlist"><a href="#5-4-链表linkedlist" class="headerlink" title="5.4 链表linkedlist"></a>5.4 链表linkedlist</h4><p>就是普通的双向链表，链表中的每个元素就是一个redisObject</p>
+<h4 id="5-5-intset"><a href="#5-5-intset" class="headerlink" title="5.5 intset"></a>5.5 intset</h4><p>数据类型为int类型的散列表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef struct intset &#123;</span><br><span class="line">    uint32_t encoding;</span><br><span class="line">    uint32_t length;</span><br><span class="line">    int8_t contents[];</span><br><span class="line">&#125; intset;</span><br></pre></td></tr></table></figure>
+
+<p>contents为数据，encoding表示具体类型(int, short, long)</p>
+<h4 id="5-6-skiplist-跳跃表"><a href="#5-6-skiplist-跳跃表" class="headerlink" title="5.6 skiplist 跳跃表"></a>5.6 skiplist 跳跃表</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">typedef struct zskiplistNode &#123;</span><br><span class="line">     /*成员object对象*/</span><br><span class="line">    robj *obj;</span><br><span class="line">     /*分数字段依赖此值对skiplist进行排序*/</span><br><span class="line">    double score;</span><br><span class="line">     /*插入层中指向上一个元素level数组*/</span><br><span class="line">    struct zskiplistNode *backward;</span><br><span class="line">    struct zskiplistLevel &#123;</span><br><span class="line">          /*每层中指向下一个元素指针*/</span><br><span class="line">        struct zskiplistNode *forward;</span><br><span class="line">          /*距离下一个元素之间元素数量, 即forward指向的元素*/</span><br><span class="line">        unsigned int span;</span><br><span class="line">    &#125; level[];</span><br><span class="line">&#125; zskiplistNode;</span><br><span class="line"></span><br><span class="line">typedef struct zskiplist &#123;</span><br><span class="line">     /*跳跃表头节点和尾节点*/</span><br><span class="line">    struct zskiplistNode *header, *tail;</span><br><span class="line">     /*跳跃表中元素个数*/</span><br><span class="line">    unsigned long length;</span><br><span class="line">     /*跳跃表当前最大层数*/</span><br><span class="line">    int level;</span><br><span class="line">&#125; zskiplist;</span><br></pre></td></tr></table></figure>
+
+<h2 id="六-各种数据类型对应的数据结构"><a href="#六-各种数据类型对应的数据结构" class="headerlink" title="六 各种数据类型对应的数据结构"></a>六 各种数据类型对应的数据结构</h2><h4 id="6-1-string-类型"><a href="#6-1-string-类型" class="headerlink" title="6.1 string 类型"></a>6.1 string 类型</h4><p>底层直接使用数组<br>默认使用sdshdr结构体（len, free, buf[]），如果保存的是数字则改用long<br>如果是0-9999的数字则会复用共享共间，如果配置了maxmemory时，则不会使用共享对象</p>
+<h4 id="6-2-散列类型"><a href="#6-2-散列类型" class="headerlink" title="6.2 散列类型"></a>6.2 散列类型</h4><p>使用了ziplist和hashtable来保存<br>如果键数 &lt; hash-max-ziplist-entries 且 每个键值的长度都小于 hash-max-ziplist-value，则会使用hashtable</p>
+<h4 id="6-3-列表类型"><a href="#6-3-列表类型" class="headerlink" title="6.3 列表类型"></a>6.3 列表类型</h4><p>可能使用ziplist和linkedlist，使用list-max-ziplist-entries list-max-ziplist-value</p>
+<h4 id="6-4-集合类型"><a href="#6-4-集合类型" class="headerlink" title="6.4 集合类型"></a>6.4 集合类型</h4><p>可以使用intset 和 hashtable<br>使用intset条件：元素都是整数而且个数小于set-max-intset-entries<br>intset 结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">typedef struct intset &#123;</span><br><span class="line">   encoding,</span><br><span class="line">   length,</span><br><span class="line">   contents[]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-5-有序集合类型"><a href="#6-5-有序集合类型" class="headerlink" title="6.5 有序集合类型"></a>6.5 有序集合类型</h4><p>有可能是skiplist或者是ziplist<br>zset-max-ziplist-entries 和 zset-max-ziplist-value<br>当使用跳表时，会使用散列表来保存键到分数的信息</p>
+<h2 id="七-备份和复制"><a href="#七-备份和复制" class="headerlink" title="七 备份和复制"></a>七 备份和复制</h2><h4 id="7-1-RDB备份"><a href="#7-1-RDB备份" class="headerlink" title="7.1 RDB备份"></a>7.1 RDB备份</h4><p><code>save</code>: 一个配置参数，save 900 90 表示900秒内有90次写操作，就会备份</p>
+<p>备份流程：fork一个子进程，与父进程共享内存，父进程继续处理请求，子进程把内存的数据写到文件中。父进程接受到新的写请求要改数据时会先把原数据复制一份给子进程。</p>
+<p><code>SAVE</code>: 命令，主进程自己进行备份，把请求阻塞住。<br><code>BGSAVE</code>: 命令，主进程fork一个子进程进行备份。</p>
+<p>优缺点：对性能影响小，但是数据可能丢失，适合数据不太重要的情况下使用。</p>
+<h4 id="7-2-AOP备份"><a href="#7-2-AOP备份" class="headerlink" title="7.2 AOP备份"></a>7.2 AOP备份</h4><p><code>appendonly yes</code>：开启AOP备份</p>
+<p>在执行写操作时，会把redis协议内容写到AOP文件里，AOP文件可以设置定时优化（可以设置超过上一次优化后在大小百分比，也可以设置最小优化大小）。</p>
+<p><code>BGREWRITEAOP</code>: 主动执行AOP文件的压缩</p>
+<p>由于磁盘30s缓存一次，可以指定每次写后刷一次缓存或者每秒刷缓存或者不主动刷缓存。</p>
+<p>优缺点: 对性能的影响比RBD方式大，但是数据丢失概率很小，适用于数据比较重要的情况下使用。</p>
+<h4 id="7-3-复制"><a href="#7-3-复制" class="headerlink" title="7.3 复制"></a>7.3 复制</h4><p>启动从库：redis-server –port 6380 –slaveof 127.0.0.1 6379<br>切换监听的主库：SLAVEOF</p>
+<p>复制原理：<br>1）从库发送SYNC命令给主库<br>2）主库执行一次RBD备份，并缓存开启备份后的新请求命令<br>3）备份完成后把备份文件发给从库，并且把缓存的命令也发给从库<br>4）从库把收到的文件放到备份文件中，执行一次恢复的过程</p>
+<p><code>serve-stale-data</code>: 参数，可选no/yes，配置从库备份时是否响应请求</p>
+<h2 id="八-通信协议"><a href="#八-通信协议" class="headerlink" title="八 通信协议"></a>八 通信协议</h2><p>简单协议：命令使用空格分开<br>统一请求协议：类似于多行字符串回复</p>
+<p>五种回复：错误回复（-），数字回复（:） 状态回复（+） 字符串回复（$） 多行字符串回复(*) </p>
+<h2 id="九-集群"><a href="#九-集群" class="headerlink" title="九 集群"></a>九 集群</h2><p>主从：一主多从，主库禁用备份，从库可选开启<br>开启无硬盘复制：repl-diskless-sync yes<br>全量复制：基于RBD备份<br>增量复制：主库更新后把更新内容记录在队列中，从库断线重连时如果在队列中有从库最重的数据，则可以增量复制，主库还有一个ID，以便确认从库之前确实是跟主库同步的</p>
+<p>哨兵模式：</p>
+<ul>
+<li>从配置文件中找出要监控的主库</li>
+<li>建立两条链接，一条订阅主库的<strong>sentinel</strong>: hello 频道，另一个定时向主库发送INFO命令</li>
+</ul>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2017/04/07/javacoll/">
+        <span class="nav-arrow">← </span>
+        
+          java 集合框架梳理
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/06/14/ConcurrentHashMap/">
+        
+          ConcurrentHashMap源码解析
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-命令"><span class="toc-nav-text">一 命令</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-1-字符串相关"><span class="toc-nav-text">1.1 字符串相关</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-2-散列相关"><span class="toc-nav-text">1.2 散列相关</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-3-列表类型"><span class="toc-nav-text">1.3 列表类型</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-4-集合类型"><span class="toc-nav-text">1.4 集合类型</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-5-有序集合"><span class="toc-nav-text">1.5 有序集合</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-事务"><span class="toc-nav-text">二 事务</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-过期时间"><span class="toc-nav-text">三 过期时间</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#四-实现队列"><span class="toc-nav-text">四 实现队列</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#五-数据结构及内存优化"><span class="toc-nav-text">五 数据结构及内存优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5-1-键值对数据类型redisObject"><span class="toc-nav-text">5.1 键值对数据类型redisObject</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5-2-ziplist"><span class="toc-nav-text">5.2 ziplist</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5-3-hashtable"><span class="toc-nav-text">5.3 hashtable</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5-4-链表linkedlist"><span class="toc-nav-text">5.4 链表linkedlist</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5-5-intset"><span class="toc-nav-text">5.5 intset</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5-6-skiplist-跳跃表"><span class="toc-nav-text">5.6 skiplist 跳跃表</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#六-各种数据类型对应的数据结构"><span class="toc-nav-text">六 各种数据类型对应的数据结构</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-1-string-类型"><span class="toc-nav-text">6.1 string 类型</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-2-散列类型"><span class="toc-nav-text">6.2 散列类型</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-3-列表类型"><span class="toc-nav-text">6.3 列表类型</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-4-集合类型"><span class="toc-nav-text">6.4 集合类型</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-5-有序集合类型"><span class="toc-nav-text">6.5 有序集合类型</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#七-备份和复制"><span class="toc-nav-text">七 备份和复制</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#7-1-RDB备份"><span class="toc-nav-text">7.1 RDB备份</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#7-2-AOP备份"><span class="toc-nav-text">7.2 AOP备份</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#7-3-复制"><span class="toc-nav-text">7.3 复制</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#八-通信协议"><span class="toc-nav-text">八 通信协议</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#九-集群"><span class="toc-nav-text">九 集群</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2018/06/12/redis01/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "《redis入门指南 》读书笔记",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

@@ -10,7 +10,7 @@
   
   <title>
     
-      并发包源码学习（一）AQS锁 | luohao07
+      并发包学习 AQS锁 - AbstractQueuedSynchronizer | luohao07
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -130,7 +130,7 @@
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
 <!-- <div id="article-banner" style="display: none">
-  <h2>并发包源码学习（一）AQS锁</h2>
+  <h2>并发包学习 AQS锁 - AbstractQueuedSynchronizer</h2>
   <p class="post-date">2018-12-02</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
@@ -148,7 +148,7 @@
   <!-- Article START -->
   <article class="post-article" style="margin-top: 60px">
     <section class="markdown-content">
-      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">并发包源码学习（一）AQS锁
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">并发包学习 AQS锁 - AbstractQueuedSynchronizer
       </p>
       <p class="article-date" style="text-align: right">December 2, 2018</p>
       <hr />
@@ -208,13 +208,13 @@
 <p>流程图如下（mermaid代码画的，凑合看吧）</p>
 <pre class="mermaid">graph LR
 start[调用acquireInterruptibly] --> conditionA{尝试获取锁}
-conditionA -- NO --> conditionC{剩余时间是否大于0ms}
-conditionC -- YES --> conditionB{剩余时间是否大于1ms}
-conditionC -- NO --> printC[返回失败]
-conditionB -- YES --> printB[阻塞住]
+conditionA -- 失败 --> conditionC{剩余时间是否大于0ms}
+conditionC -- 是 --> conditionB{剩余时间是否大于1ms}
+conditionC -- 否 --> printC[返回失败]
+conditionB -- 是 --> printB[阻塞住]
 printB -- 时间达到唤醒 --> conditionA
-conditionB -- NO --> conditionA
-conditionA -- YES --> printA[返回成功]</pre>
+conditionB -- 否 --> conditionA
+conditionA -- 成功 --> printA[返回成功]</pre>
 
     </section>
     <!-- Tags START -->
@@ -244,7 +244,7 @@ conditionA -- YES --> printA[返回成功]</pre>
     
       <a class="nav-right" href="/2018/12/07/javaconcurrent02/">
         
-          并发包源码（二）ReentrantLock
+          并发包学习 ReentrantLock
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -336,7 +336,7 @@ conditionA -- YES --> printA[返回成功]</pre>
     var gitmentConfig = "luohao07";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "并发包源码学习（一）AQS锁",
+        id: "并发包学习 AQS锁 - AbstractQueuedSynchronizer",
         owner: "luohao07",
         repo: "luohao07.github.io",
         oauth: {

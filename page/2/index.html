@@ -132,6 +132,48 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/2018/12/07/javaconcurrent02/">并发包学习 ReentrantLock</a>
+      </h2>
+      <p class="article-date">December 7, 2018</p>
+      
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 ReentrantLock的特性
+支持重入：指的是同一个线程多次lock()可以成功，并且lock多少次后续就需要unlock才能释放锁
+支持公平锁和非公平锁：公平锁是指先调用lock的线 ...
+        
+      </div>
+      <a class="more" href="/2018/12/07/javaconcurrent02/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/12/02/javaconcurrent01/">并发包学习 AQS锁 - AbstractQueuedSynchronizer</a>
+      </h2>
+      <p class="article-date">December 2, 2018</p>
+      
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 什么是AQSAQS即AbstractQueuedSynchronizer，在Java并发包中的一个基础类，并发包中的所有锁相关类，如ReentrantLock，ReentrantReadW ...
+        
+      </div>
+      <a class="more" href="/2018/12/02/javaconcurrent01/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/2018/09/21/concurrent/">并发编程总结</a>
       </h2>
       <p class="article-date">September 21, 2018</p>
@@ -147,8 +189,7 @@
           一 多线程基础1.1 线程的状态及其变更
 1.2涉及到的各种方法
 Thread.start()让线程进入就绪状态，不是立即执行
-Thread.yield()Thread类的静态方法，让当前线程放弃CPU时间，从运行中状态变为就绪状态（可能又马上被CPU执行了）
-Thread.join()在当 ...
+Thread.yield()Thread类的静态方法，让当前线程 ...
         
       </div>
       <a class="more" href="/2018/09/21/concurrent/">Read more</a>
@@ -170,11 +211,32 @@ Thread.join()在当 ...
         
           一 1.7版本的实现方式
 采用分段锁机制，底层有两个对象，一个是Segment对象，另一个是HashEntry对象
-一个Segment就是一把锁，它继承自ReentrantLock，每个Segment锁住若干个桶(不一定是一个)。
-一个HashEntry是一个链表，里面包含Key-Value ...
+一个Segment就是一把锁，它继承自ReentrantLock，每个Seg ...
         
       </div>
       <a class="more" href="/2018/06/14/ConcurrentHashMap/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/06/12/redis01/">《redis入门指南 》读书笔记</a>
+      </h2>
+      <p class="article-date">June 12, 2018</p>
+      
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 命令1.1 字符串相关
+原子加减：INCR，DECR，INCRBY，DECRBY，会返回操作后的值
+按位操作：GETBIT，SETBIT，BITOP（按位运算），BITCOUNT（统计位是 ...
+        
+      </div>
+      <a class="more" href="/2018/06/12/redis01/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -192,8 +254,7 @@ Thread.join()在当 ...
       <div class="article-summary">
         
           一 java 集合框架图
-二 List2.1 ArrayList底层数据结构：线性表(数组)线程安全：否核心字段：字段名|类型|作用|备注-|-|-|-elementData|Object[]|保存数据|-size|int|长度|-modCount|int|被修改的次数|-
- 初始化过程：若 ...
+二 List2.1 ArrayList底层数据结构：线性表(数组)线程安全：否核心字段：字段名|类型|作用|备注-|-|-|-elementData|Object[] ...
         
       </div>
       <a class="more" href="/2017/04/07/javacoll/">Read more</a>
@@ -211,8 +272,6 @@ Thread.join()在当 ...
 </div>
   
 </main>
-
-
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>

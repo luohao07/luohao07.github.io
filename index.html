@@ -132,6 +132,28 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/2019/08/08/rediscluster.mdtemp/"></a>
+      </h2>
+      <p class="article-date">August 8, 2019</p>
+      
+      <div class="article-summary">
+        
+          graph TD 
+
+printM[主节点]
+printS1[从节点1]
+printS2[从节点2]
+printS3[从节点3]
+printST1[哨兵1]
+printST2[哨兵2]
+pri ...
+        
+      </div>
+      <a class="more" href="/2019/08/08/rediscluster.mdtemp/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/2019/07/31/javanio9/">Java NIO（九）tcp粘包拆包及ByteToMessageDecoder</a>
       </h2>
       <p class="article-date">July 31, 2019</p>
@@ -145,7 +167,7 @@
       <div class="article-summary">
         
           一 ByteToMessageDecoder1.1 实例ByteToMessageDecoder，用于把一个byte流转换成一个对象，实例：
-1234567public class StringDecoder extends ByteToMessageDecoder &#123;    pr ...
+1234567public class Strin ...
         
       </div>
       <a class="more" href="/2019/07/31/javanio9/">Read more</a>
@@ -168,9 +190,7 @@
           一 ByteBuffer1.1 ByteBuffer的内部结构和读写模式Java nio包提供的原生的缓存区类，基本的使用方式是：
 
 创建对象，往里面写数据
-调用flip()方法，转换为读模式
-从中读取之前写入的数据
-调用clear() 或者 compact() 清除数据1234567891 ...
+调用flip()方法，转换为读模式 ...
         
       </div>
       <a class="more" href="/2019/07/29/javanio8/">Read more</a>
@@ -190,8 +210,7 @@
       
       <div class="article-summary">
         
-          一 ChannelHandlerContext和ChannelHandler在ChannelPipeline这一层，ChannelPipeline会把收到的事件交给ChannelHandler处理。
-在外部，我们可以向ChannelPipeline中添加ChannelHandler处理器，但 ...
+          一 ChannelHandlerContext和ChannelHandler在ChannelPipeline这一层，ChannelPipeline会把收到的事件交给ChannelHandler ...
         
       </div>
       <a class="more" href="/2019/07/28/javanio7/">Read more</a>
@@ -211,8 +230,7 @@
       
       <div class="article-summary">
         
-          一 Channel和Unsafe的关系首先这里的Channel是Netty中自定义的类，并不是JDK中提供的java.nio.channels.Channel类，它的全类名是io.netty.channel.Channel。
-下面的讨论会同时涉及到这两个类，为了不搞混我们先约定在说Chann ...
+          一 Channel和Unsafe的关系首先这里的Channel是Netty中自定义的类，并不是JDK中提供的java.nio.channels.Channel类，它的全类名是io.netty. ...
         
       </div>
       <a class="more" href="/2019/07/27/javanio6/">Read more</a>
@@ -232,7 +250,7 @@
       
       <div class="article-summary">
         
-          前面看完了Netty一次请求的处理流程以及相关的类，我们知道了Netty中核心的类或者说分层是：EventLoop，Unsafe，ChannelPipeline，ChannelHandler。其中的EventLoop用于启动一个线程，实例化一个Selector对象，然后不断的select出C ...
+          前面看完了Netty一次请求的处理流程以及相关的类，我们知道了Netty中核心的类或者说分层是：EventLoop，Unsafe，ChannelPipeline，ChannelHandler。 ...
         
       </div>
       <a class="more" href="/2019/07/26/javanio5/">Read more</a>
@@ -253,8 +271,7 @@
       <div class="article-summary">
         
           一 整个调用流程图先放一张调用的流程图，从最下面开始往上调用。
-除了最下面的Channel之外，关键的类就是EventLoop，Unsafe，ChannelPipeline，ChannelHandler。下面分别解析一下这四层。
-二 EventLoop从它的名字大概可以看出它是干嘛的：事件循 ...
+除了最下面的Channel之外，关键的类就是EventLoop，Unsafe，ChannelPipeline，ChannelHa ...
         
       </div>
       <a class="more" href="/2019/07/23/javanio4/">Read more</a>
@@ -274,8 +291,7 @@
       
       <div class="article-summary">
         
-          一 Java 源生api的核心概念1.1 Channel Channel：通道，BIO模型中使用流来传输数据，在NIO中使用Channel来传输数据，它是双向的，一个Channel即可以读也可以写（BIO中流是单向的，所以分了InputStream和OutputStream）。
-网络编程中用 ...
+          一 Java 源生api的核心概念1.1 Channel Channel：通道，BIO模型中使用流来传输数据，在NIO中使用Channel来传输数据，它是双向的，一个Channel即可以读也可 ...
         
       </div>
       <a class="more" href="/2019/07/20/javanio2/">Read more</a>
@@ -297,8 +313,7 @@
         
           一 内核接受网卡流量的整个流程预备知识：
 
-网络编程的核心对象是socket，当创建socket时在底层会创建一个由文件系统管理的socket对象。这个对象包括了发送缓冲区，接收缓冲区，等待队列。
-recv函数用于从某一个socket中接受流量，但是这个函数在被调用入进程会一直处于阻塞状态， ...
+网络编程的核心对象是socket，当创建socket时在底层会创建一个由文件系统管理的socket对象。这个对象包括了发送缓冲区，接收缓冲区，等待队 ...
         
       </div>
       <a class="more" href="/2019/07/19/javanio1/">Read more</a>
@@ -306,9 +321,9 @@ recv函数用于从某一个socket中接受流量，但是这个函数在被调�
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2018/12/07/javaconcurrent02/">并发包源码（二）ReentrantLock</a>
+        <a href="/2018/12/11/javaconcurrent03/">并发包学习 读写锁—ReentrantReadWriteLock</a>
       </h2>
-      <p class="article-date">December 7, 2018</p>
+      <p class="article-date">December 11, 2018</p>
       
         
   <a href="/tags#并发编程" >
@@ -318,34 +333,17 @@ recv函数用于从某一个socket中接受流量，但是这个函数在被调�
       
       <div class="article-summary">
         
-          一 ReentrantLock的特性
-支持重入：指的是同一个线程多次lock()可以成功，并且lock多少次后续就需要unlock才能释放锁
-支持公平锁和非公平锁：公平锁是指先调用lock的线程后续一定会先拿到锁，非公平则没有这种要求
-时间锁等候：即支持带时间参数的lock，线程最多只会阻塞 ...
-        
-      </div>
-      <a class="more" href="/2018/12/07/javaconcurrent02/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/12/02/javaconcurrent01/">并发包源码学习（一）AQS锁</a>
-      </h2>
-      <p class="article-date">December 2, 2018</p>
-      
-        
-  <a href="/tags#并发编程" >
-    <span class="tag-code">并发编程</span>
-  </a>
+          一 读写锁 Java中读写锁的特征：
 
-      
-      <div class="article-summary">
-        
-          一 什么是AQSAQS即AbstractQueuedSynchronizer，在Java并发包中的一个基础类，并发包中的所有锁相关类，如ReentrantLock，ReentrantReadWriteLock，Semaphone等都是基于AQS锁来实现的。
-先放张简单点的图，这张图以后会再补 ...
+读读不互斥，读写互斥，写写互斥
+支持公平锁与平公平锁
+支持重入
+支持锁降级，但是不支持锁升级
+
+锁降级指的是先获取写锁，在不释放写锁的情况下再获取读锁， ...
         
       </div>
-      <a class="more" href="/2018/12/02/javaconcurrent01/">Read more</a>
+      <a class="more" href="/2018/12/11/javaconcurrent03/">Read more</a>
     </article>
   
 
@@ -360,8 +358,6 @@ recv函数用于从某一个socket中接受流量，但是这个函数在被调�
 </div>
   
 </main>
-
-
     <div class="scroll-top">
   <span class="arrow-icon"></span>
 </div>
