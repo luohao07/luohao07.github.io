@@ -10,7 +10,7 @@
   
   <title>
     
-      luohao07
+      redis 哨兵机制和主从模式 | luohao07
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -130,8 +130,8 @@
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
 <!-- <div id="article-banner" style="display: none">
-  <h2></h2>
-  <p class="post-date">2019-08-08</p>
+  <h2>redis 哨兵机制和主从模式</h2>
+  <p class="post-date">2019-08-10</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -148,39 +148,58 @@
   <!-- Article START -->
   <article class="post-article" style="margin-top: 60px">
     <section class="markdown-content">
-      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">redis 哨兵机制和主从模式
       </p>
-      <p class="article-date" style="text-align: right">August 8, 2019</p>
+      <p class="article-date" style="text-align: right">August 10, 2019</p>
       <hr />
-      <pre class="mermaid">graph TD 
+      <h1 id="一-哨兵的作用"><a href="#一-哨兵的作用" class="headerlink" title="一 哨兵的作用"></a>一 哨兵的作用</h1><p>哨兵机制是redis主从模型解决方案，可以监控主服务器及其下的所有从服务器的状态，如果主服务器挂了，会操作选取其中一个从服务器作为主服务器。</p>
+<p>哨兵通常不止一个，一般都是奇数个，如3，5，7，9。当主节点挂掉之后，会通过投票的方式，选取一个从节点来充当主节点。</p>
+<h1 id="二-哨兵与主从服务节点的通信机制"><a href="#二-哨兵与主从服务节点的通信机制" class="headerlink" title="二 哨兵与主从服务节点的通信机制"></a>二 哨兵与主从服务节点的通信机制</h1><p>由于多个哨兵之间需要投票选取新的主节点，所以它们两两之间需要建立连接：</p>
+<pre class="mermaid">graph TD
+printA[哨兵A]
+printB[哨兵B]
+printC[哨兵C]
 
-printM[主节点]
-printS1[从节点1]
-printS2[从节点2]
-printS3[从节点3]
-printST1[哨兵1]
-printST2[哨兵2]
-printST3[哨兵3]
+printA -- 连接 --> printB
+printB -- 连接 --> printA
+printA -- 连接 --> printC
+printC -- 连接 --> printA
+printB -- 连接 --> printC
+printC -- 连接 --> printB</pre>
+<p>建立连接的方式：如A连接B，即A作为B的客户端登录到B</p>
+<p>哨兵为了发现与它一样监控同一个节点的其他哨兵，需要订阅主节点的<code>_sentinel_:hello</code>频道，并且自己需要每2s一次的通过与主节点的命令连接发送一个以下格式的心跳：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUBLISH sentinel : he11o &quot;&lt;s_ ip&gt;,&lt;s_ port&gt;,&lt;s_ runid&gt;,&lt;s_ epoch&gt;, &lt;m_ name&gt;,&lt;m_ip&gt;,&lt;m_ port&gt;, &lt;m_ epoch&gt;&quot;</span><br></pre></td></tr></table></figure>
 
-printS1 -- 复制 --> printM
-printS2 -- 复制 --> printM
-printS3 -- 复制 --> printM
-
-printST1 -- 监听 --> printM
-printST2 -- 监听 --> printM
-printST3 -- 监听 --> printM
-printST1 -- 监听 --> printS1
-printST2 -- 监听 --> printS1
-printST3 -- 监听 --> printS1
-printST1 -- 监听 --> printS2
-printST2 -- 监听 --> printS2
-printST3 -- 监听 --> printS2
-printST1 -- 监听 --> printS3
-printST2 -- 监听 --> printS3
-printST3 -- 监听 --> printS3</pre>
+<p>主节点收到这个命令后会把收到的内容转发到<code>_sentinel:hello</code>频道上，这样，其它订阅了这个频道的哨兵就可以收到这个心跳了</p>
+<p>当新增加一个哨兵时，它只需要订阅主节点的<code>_sentinel:hello</code>就可以获取到其它哨兵的信息，并与它们建立连接，同时它也会不断的向主节点发送心跳。</p>
+<h1 id="三-主观下线和客观下线"><a href="#三-主观下线和客观下线" class="headerlink" title="三 主观下线和客观下线"></a>三 主观下线和客观下线</h1><p>主观下线：哨兵会以10s/次的频率向所有与它建立了连接的节点（包括主节点，从节点和其他哨兵节点）发送PING命令，如果对方没有在要求的时间内作出响应，则会认为它已经下线了，这种称为主观下线。</p>
+<p>客观下线：如果主节点主观下线了，这哨兵会向其他哨兵询问，看看其它哨兵是否也认为主节点主观下线了。如果有一半以上的节点都认为主节点已经主观下线了，则哨兵会把主节点标记了客观下线状态。</p>
+<h1 id="四-领头哨兵的选取"><a href="#四-领头哨兵的选取" class="headerlink" title="四 领头哨兵的选取"></a>四 领头哨兵的选取</h1><p>当一个哨兵把主节点标记为客观下线后，就要开始故障转移工作，首选需要选取领头的节点，由它来完成这一系列操作，具体逻辑是：</p>
+<ul>
+<li>每一个想要成为领头节点的哨兵都需要向其它节点发送命令，要求它们选取自己为领头节点</li>
+<li>任意一个哨兵，在它收到其他节点选取领头节点的请求后，如果自己没有选取过其他节点为领头节点，则会这个请求，否则会拒绝这个操作</li>
+<li>如果一个哨兵获得了一半以上的节点的同意，这它就成为了领头节点</li>
+</ul>
+<h1 id="五-故障转移工作"><a href="#五-故障转移工作" class="headerlink" title="五 故障转移工作"></a>五 故障转移工作</h1><p>领头节点选取完成后，会开始操作故障转移：</p>
+<ul>
+<li>从从节点中选取一个节点，晋升为主节点</li>
+<li>向新节点发送一个<code>SLAVEOF no one</code>命令，通知它成为了主节点</li>
+<li>不断的获取新主节点的信息，如果返回值包含<code>role: master</code>，说明新主节点已经得到了通知，并且认为自己为主节点了</li>
+<li>向其他的从节点发送<code>SLAVEOF ${newMasterIpPort}</code>命令，通知它们复制新的主节点</li>
+<li>监控旧的主节点，如果它重新上线，则让它成为新的主节点的从节点</li>
+</ul>
 
     </section>
     <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
+      </div>
     
     <!-- Tags END -->
     <!-- NAV START -->
@@ -188,13 +207,20 @@ printST3 -- 监听 --> printS3</pre>
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2019/07/31/javanio9/">
+      <a class="nav-left" href="/2019/08/10/redis04/">
         <span class="nav-arrow">← </span>
         
-          Java NIO（九）tcp粘包拆包及ByteToMessageDecoder
+          redis 集群
         
       </a>
     
+    
+      <a class="nav-right" href="/2019/08/10/redis02/">
+        
+          redis 数据结构
+        
+        <span class="nav-arrow"> →</span>
+      </a>
     
   </div>
 
@@ -218,7 +244,7 @@ printST3 -- 监听 --> printS3</pre>
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="nav">none</ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#一-哨兵的作用"><span class="toc-nav-text">一 哨兵的作用</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#二-哨兵与主从服务节点的通信机制"><span class="toc-nav-text">二 哨兵与主从服务节点的通信机制</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#三-主观下线和客观下线"><span class="toc-nav-text">三 主观下线和客观下线</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#四-领头哨兵的选取"><span class="toc-nav-text">四 领头哨兵的选取</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#五-故障转移工作"><span class="toc-nav-text">五 故障转移工作</span></a></li></ol>
     
   </div>
 </aside>
@@ -228,7 +254,7 @@ printST3 -- 监听 --> printS3</pre>
 
 <script>
   (function () {
-    var url = 'http://www.luohao07.com/2019/08/08/rediscluster.mdtemp/';
+    var url = 'http://www.luohao07.com/2019/08/10/redis03/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -283,7 +309,7 @@ printST3 -- 监听 --> printS3</pre>
     var gitmentConfig = "luohao07";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "",
+        id: "redis 哨兵机制和主从模式",
         owner: "luohao07",
         repo: "luohao07.github.io",
         oauth: {

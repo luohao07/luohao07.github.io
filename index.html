@@ -132,24 +132,89 @@
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2019/08/08/rediscluster.mdtemp/"></a>
+        <a href="/2019/08/10/redis02/">redis 数据结构</a>
       </h2>
-      <p class="article-date">August 8, 2019</p>
+      <p class="article-date">August 10, 2019</p>
+      
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
       
       <div class="article-summary">
         
-          graph TD 
+          一 字符串底层使用SDS的数据结构来保存字符串，而不是用C语言中的字符串。SDS即simple dynamic string，结构如下：
 
-printM[主节点]
-printS1[从节点1]
-printS2[从节点2]
-printS3[从节点3]
-printST1[哨兵1]
-printST2[哨兵2]
-pri ...
+len:  已经使用的字段的长度
+free: 未使用 ...
         
       </div>
-      <a class="more" href="/2019/08/08/rediscluster.mdtemp/">Read more</a>
+      <a class="more" href="/2019/08/10/redis02/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2019/08/10/redis03/">redis 哨兵机制和主从模式</a>
+      </h2>
+      <p class="article-date">August 10, 2019</p>
+      
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 哨兵的作用哨兵机制是redis主从模型解决方案，可以监控主服务器及其下的所有从服务器的状态，如果主服务器挂了，会操作选取其中一个从服务器作为主服务器。
+哨兵通常不止一个，一般都是奇数个，如 ...
+        
+      </div>
+      <a class="more" href="/2019/08/10/redis03/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2019/08/10/redis04/">redis 集群</a>
+      </h2>
+      <p class="article-date">August 10, 2019</p>
+      
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 节点1.1 启动集群模式一个redis服务就是一个节点，如果配置了cluster-enabled选项，则会开启集群模型，这时候这一个节点会单独的在自己的集群中。
+例如：在同一台机器上启动三 ...
+        
+      </div>
+      <a class="more" href="/2019/08/10/redis04/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2019/08/06/redis01/">《redis入门指南 》读书笔记</a>
+      </h2>
+      <p class="article-date">August 6, 2019</p>
+      
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 命令1.1 字符串相关
+原子加减：INCR，DECR，INCRBY，DECRBY，会返回操作后的值
+按位操作：GETBIT，SETBIT，BITOP（按位运算），BITCOUNT（统计位是 ...
+        
+      </div>
+      <a class="more" href="/2019/08/06/redis01/">Read more</a>
     </article>
   
     <article class="article-card">
@@ -275,75 +340,6 @@ pri ...
         
       </div>
       <a class="more" href="/2019/07/23/javanio4/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2019/07/20/javanio2/">Java NIO（二）NIO入门实例</a>
-      </h2>
-      <p class="article-date">July 20, 2019</p>
-      
-        
-  <a href="/tags#JavaNIO" >
-    <span class="tag-code">JavaNIO</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          一 Java 源生api的核心概念1.1 Channel Channel：通道，BIO模型中使用流来传输数据，在NIO中使用Channel来传输数据，它是双向的，一个Channel即可以读也可 ...
-        
-      </div>
-      <a class="more" href="/2019/07/20/javanio2/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2019/07/19/javanio1/">Java NIO（一）select 和 epoll底层实现原理</a>
-      </h2>
-      <p class="article-date">July 19, 2019</p>
-      
-        
-  <a href="/tags#JavaNIO" >
-    <span class="tag-code">JavaNIO</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          一 内核接受网卡流量的整个流程预备知识：
-
-网络编程的核心对象是socket，当创建socket时在底层会创建一个由文件系统管理的socket对象。这个对象包括了发送缓冲区，接收缓冲区，等待队 ...
-        
-      </div>
-      <a class="more" href="/2019/07/19/javanio1/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
-        <a href="/2018/12/11/javaconcurrent03/">并发包学习 读写锁—ReentrantReadWriteLock</a>
-      </h2>
-      <p class="article-date">December 11, 2018</p>
-      
-        
-  <a href="/tags#并发编程" >
-    <span class="tag-code">并发编程</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          一 读写锁 Java中读写锁的特征：
-
-读读不互斥，读写互斥，写写互斥
-支持公平锁与平公平锁
-支持重入
-支持锁降级，但是不支持锁升级
-
-锁降级指的是先获取写锁，在不释放写锁的情况下再获取读锁， ...
-        
-      </div>
-      <a class="more" href="/2018/12/11/javaconcurrent03/">Read more</a>
     </article>
   
 

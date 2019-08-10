@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      redis 数据结构 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    <script src="/js/gitment.js"></script>
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2>redis 数据结构</h2>
+  <p class="post-date">2019-08-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">redis 数据结构
+      </p>
+      <p class="article-date" style="text-align: right">August 10, 2019</p>
+      <hr />
+      <h1 id="一-字符串"><a href="#一-字符串" class="headerlink" title="一 字符串"></a>一 字符串</h1><p>底层使用SDS的数据结构来保存字符串，而不是用C语言中的字符串。SDS即simple dynamic string，结构如下：<br><img src="https://upload-images.jianshu.io/upload_images/7808098-14ecf26bbc6f88c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="sdsstr数据结构及示例"></p>
+<ul>
+<li><code>len</code>:  已经使用的字段的长度</li>
+<li><code>free</code>: 未使用的字段的长度</li>
+<li><code>buf</code>: 字节数组</li>
+</ul>
+<p>而C语言中的字符串，就是一个单纯的以<code>\0</code>结尾的数组，</p>
+<p>与C语言中的字符串相比，SDS有以下几点优势： </p>
+<ol>
+<li><p>计算长度的时间复杂度为o(1)，而不是C字符串的o(n)<br>C字符串的格式就是一个以<code>\0</code>结束的数组，如果要获取长度需要遍历，而sds使用len保存了这个数据。</p>
+</li>
+<li><p>不用考虑内存溢出等问题，内部已经封装好了<br>C字符串扩展字符串时要自己分配内存，否则内存会溢出，而sds已经对长度的检测做了封装了。</p>
+</li>
+<li><p>扩展字符串或者缩减字符串不需要重新分配内存<br>C字符串中扩展和缩减字符串都需要重新分配内存，但是sds不需要，因为它有<code>未使用的字节长度</code>，所以其实是可以伸缩的。</p>
+</li>
+<li><p>二进制安全<br>C字符串以<code>\0</code>结尾，因此不能保存内部可能出现<code>\0</code>的二进制数据。虽然sds也是<code>\0</code>结尾的，但是实际读取时会依赖于长度<code>len</code>来读取，不需要担心<code>\0</code>的问题。</p>
+</li>
+</ol>
+<p><img src="https://upload-images.jianshu.io/upload_images/7808098-6e1a9bcb0d9ae5d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="C字符串与SDS的区别"></p>
+<h1 id="二-链表"><a href="#二-链表" class="headerlink" title="二 链表"></a>二 链表</h1><p>redis中的链表它就是一个普通的双向链表，没有什么花里胡哨的操作，列表的结构体叫<code>list</code>，列表节点的结构体叫<code>listNode</code>：<br><img src="https://upload-images.jianshu.io/upload_images/7808098-fd8f7d8f79749c18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="链表"></p>
+<p><code>dup</code>, <code>free</code>, <code>match</code> 三个操作链表相关的函数</p>
+<h1 id="三-hash表-字典"><a href="#三-hash表-字典" class="headerlink" title="三 hash表(字典)"></a>三 hash表(字典)</h1><h3 id="3-1-结构"><a href="#3-1-结构" class="headerlink" title="3.1 结构"></a>3.1 结构</h3><p>redis中的数据库（也就是键与值的对应关系）和散列表都是基于字典来实现的<br>底层结构与Java中的HashMap类似，桶链结构：<br><img src="https://upload-images.jianshu.io/upload_images/7808098-49b4aedb09e536e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="redis中的字典"></p>
+<p>dictht即字典对应的结构体名称，而dictEntry是字典中中链表的结构体名称</p>
+<ul>
+<li><code>table</code>: dictEntry数组，实际保存数据</li>
+<li><code>size</code>: dictEntry的长度</li>
+<li><code>sizemask</code>: 总是为size - 1，用于把节点映射到桶的下标</li>
+<li><code>used</code>: 实际保存的数据量</li>
+</ul>
+<p>hash算法：<code>murmurhash</code></p>
+<h3 id="3-2-扩容"><a href="#3-2-扩容" class="headerlink" title="3.2 扩容"></a>3.2 扩容</h3><p>触发条件，以下两个任意满足一个：</p>
+<ul>
+<li>负载因子 &gt;= 1 且 没有正在执行BGSAVE或者BGREWRITEAOP命令</li>
+<li>负载因子 &gt;= 5</li>
+</ul>
+<p>扩容方式：每次都取比当前数据量used*2大的最小的2的整数次幂</p>
+<h3 id="3-3渐渐式-rehash"><a href="#3-3渐渐式-rehash" class="headerlink" title="3.3渐渐式 rehash"></a>3.3渐渐式 rehash</h3><p>扩容时不会立即把数据rehash到新的hash表中去，而是在每次操作对应数据时才rehash那一项</p>
+<h1 id="四-跳跃表"><a href="#四-跳跃表" class="headerlink" title="四 跳跃表"></a>四 跳跃表</h1><p><a href="https://www.jianshu.com/p/dc252b5efca6" target="_blank" rel="noopener">跳跃表的基本内容</a></p>
+<p>redis中的跳跃表<br><img src="https://upload-images.jianshu.io/upload_images/7808098-72acd96f9d6bc450.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="redis中的跳跃表"><br>感觉跟一个普通的跳跃表没什么区别</p>
+<p>#五 整数集合<br>当redis中集合只包含整数数据时，会使用整数集合来保存<br><img src="https://upload-images.jianshu.io/upload_images/7808098-a8fed6616da9194a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300" alt="redis中的整数集合"></p>
+<p>集合的元素类型会依据元素最大绝对值来使用long，int，short，或者byte</p>
+<h1 id="六-压缩列表ziplist"><a href="#六-压缩列表ziplist" class="headerlink" title="六 压缩列表ziplist"></a>六 压缩列表ziplist</h1><p><code>ziplist</code>分为 <code>头-体</code> 两部分，头部数据包含：</p>
+<ul>
+<li><code>zlbytes</code>: 整个结构体占用的空间</li>
+<li><code>zltail</code>: 到最后一个元素的偏移量，方便从后面查找</li>
+<li><code>zllen</code>: 元素的数量</li>
+</ul>
+<p>中间元素的数据结构，有四个字段：</p>
+<ul>
+<li>前一个元素的大小：方便倒顺查找</li>
+<li>当前元素的编码类型</li>
+<li>当前元素的大小：通过这个值可以定位到下一个元素的位置</li>
+<li>当前元素的内容</li>
+</ul>
+<p>此外ziplist用一个单字节的值<code>zlend = 255</code>来标记结尾<br><img src="https://upload-images.jianshu.io/upload_images/7808098-002aef52c9b93329.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="ziplist"></p>
+<p>#七 redis中各种数据类型对应的数据结构</p>
+<h3 id="7-1-对象类型与编码"><a href="#7-1-对象类型与编码" class="headerlink" title="7.1 对象类型与编码"></a>7.1 对象类型与编码</h3><p>redis中使用<code>redisObject</code>保存所有对象的数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">typedef struct redisObject &#123;</span><br><span class="line">    unsigned type:4;</span><br><span class="line">    unsigned encoding:4;</span><br><span class="line">    unsigned lru:LRU_BITS;</span><br><span class="line">    int refcount;</span><br><span class="line">    void *ptr;</span><br><span class="line">&#125; robj;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>type</code>: 对象数据类型，只能取redis支持的五种数据类型</li>
+<li><code>encoding</code>: 对象的数据结构，也就是上面说的那些数据结构</li>
+<li><code>refcount</code>: redis使用引用记数法做内存回收</li>
+<li><code>ptr</code>: 数据地址</li>
+</ul>
+<p>例如执行<code>SET msg &quot;hello world&quot;</code>命令后，redis底层将多了两个<code>redisObject</code>对象，一个对象保存了键的数据，另一个保存了值的数据，而<code>type</code>字段标记了这两个对象保存的数据类型。</p>
+<h3 id="7-2-字符串类型对应的数据结构"><a href="#7-2-字符串类型对应的数据结构" class="headerlink" title="7.2 字符串类型对应的数据结构"></a>7.2 字符串类型对应的数据结构</h3><p>redis中字符串类型可以使用以下三种数据结构保存：</p>
+<ul>
+<li><code>int</code>: 数字类型。如果字符串值实际上是一个数字，且能用long表示，则使用数字类型。</li>
+<li><code>embstr</code>:  也就是上面说的sds字符串。如果字符串的值的长度 &lt;= 32，则使用这种类型。</li>
+<li><code>raw</code>: 也是上面说的sds字符串。如果字符串值的长度 &gt; 32，则使用这种类型。</li>
+</ul>
+<p><code>embstr</code>与<code>raw</code>的区别是：embstr会为redisoObject和sds字符串一次性分配内存空间，而raw则会分两次分别为它们分配内存空间。也就是说embstr的redisObject和sds两个对象在物理上是连续的，而raw不是。</p>
+<h3 id="7-3-列表类型对应的数据结构"><a href="#7-3-列表类型对应的数据结构" class="headerlink" title="7.3 列表类型对应的数据结构"></a>7.3 列表类型对应的数据结构</h3><ul>
+<li><code>ziplist</code>: 当列表中元素的个数 &lt;= 512，并且每个元素的长度 &lt;= 64时，使用ziplist</li>
+<li><code>linkedlist</code>: 当元素个数 &gt; 512 或者至少有一个长度 &gt; 64 的元素时，使用linkedlist</li>
+</ul>
+<blockquote>
+<p>64和512这两个值可以使用list-max-ziplist-value和list-max-ziplist-entries来设置</p>
+</blockquote>
+<h3 id="7-4-散列表类型的数据结构"><a href="#7-4-散列表类型的数据结构" class="headerlink" title="7.4 散列表类型的数据结构"></a>7.4 散列表类型的数据结构</h3><ul>
+<li><code>ziplist</code>: 所有键值对的键和值的长度都 &lt;= 64，并且键值对个数 &lt;= 512</li>
+<li><code>hashtable</code>: 也就是字典，不满足上面的条件时使用字典</li>
+</ul>
+<p>使用ziplist时，底层是按照 <code>键 - 值 - 键 - 值 - 键 - 值</code>这样交替摆放来实现的</p>
+<blockquote>
+<p> 这里的64和512这两个值可以使用hash-max-ziplist-value和hash-max-ziplist-entries来设置</p>
+</blockquote>
+<h3 id="7-5-集合类型的数据结构"><a href="#7-5-集合类型的数据结构" class="headerlink" title="7.5 集合类型的数据结构"></a>7.5 集合类型的数据结构</h3><ul>
+<li><code>intset</code>: 集合中的元素都是整数，且个数 &lt;= 512</li>
+<li><code>hashtable</code>: 不满足上述条件时使用hashtable</li>
+</ul>
+<blockquote>
+<p>512这个上限可使用set-max-intset-entries 来修改</p>
+</blockquote>
+<h3 id="7-6-有序集合的数据结构"><a href="#7-6-有序集合的数据结构" class="headerlink" title="7.6 有序集合的数据结构"></a>7.6 有序集合的数据结构</h3><ul>
+<li><code>ziplist</code>: 集合中元素个数 &lt;= 128 且每个元素的长度 &lt;= 64</li>
+<li><code>skiplist</code>: 不满足上述条件后使用</li>
+</ul>
+<p>使用ziplist时的结构：<code>值-分数-值-分数-值-分数</code><br>如果使用的是skiplist，还会再使用字典保存元素与分数的对应关系</p>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/08/10/redis03/">
+        <span class="nav-arrow">← </span>
+        
+          redis 哨兵机制和主从模式
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#一-字符串"><span class="toc-nav-text">一 字符串</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#二-链表"><span class="toc-nav-text">二 链表</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#三-hash表-字典"><span class="toc-nav-text">三 hash表(字典)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-结构"><span class="toc-nav-text">3.1 结构</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-扩容"><span class="toc-nav-text">3.2 扩容</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3渐渐式-rehash"><span class="toc-nav-text">3.3渐渐式 rehash</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#四-跳跃表"><span class="toc-nav-text">四 跳跃表</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#六-压缩列表ziplist"><span class="toc-nav-text">六 压缩列表ziplist</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#7-1-对象类型与编码"><span class="toc-nav-text">7.1 对象类型与编码</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#7-2-字符串类型对应的数据结构"><span class="toc-nav-text">7.2 字符串类型对应的数据结构</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#7-3-列表类型对应的数据结构"><span class="toc-nav-text">7.3 列表类型对应的数据结构</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#7-4-散列表类型的数据结构"><span class="toc-nav-text">7.4 散列表类型的数据结构</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#7-5-集合类型的数据结构"><span class="toc-nav-text">7.5 集合类型的数据结构</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#7-6-有序集合的数据结构"><span class="toc-nav-text">7.6 有序集合的数据结构</span></a></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2019/08/10/redis02/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "redis 数据结构",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

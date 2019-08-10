@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      redis 集群 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    <script src="/js/gitment.js"></script>
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2>redis 集群</h2>
+  <p class="post-date">2019-08-10</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">redis 集群
+      </p>
+      <p class="article-date" style="text-align: right">August 10, 2019</p>
+      <hr />
+      <h1 id="一-节点"><a href="#一-节点" class="headerlink" title="一 节点"></a>一 节点</h1><h3 id="1-1-启动集群模式"><a href="#1-1-启动集群模式" class="headerlink" title="1.1 启动集群模式"></a>1.1 启动集群模式</h3><p>一个redis服务就是一个节点，如果配置了<code>cluster-enabled</code>选项，则会开启集群模型，这时候这一个节点会单独的在自己的集群中。</p>
+<p>例如：在同一台机器上启动三个redis服务，端口分别为7000-7002，则它们都会启动集群模式，并且都会在自己的集群中：</p>
+<p><img src="/imgs/7808098-e991df079457cc46.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt></p>
+<h3 id="1-2-向集群中加入节点"><a href="#1-2-向集群中加入节点" class="headerlink" title="1.2 向集群中加入节点"></a>1.2 向集群中加入节点</h3><p><code>CLUSTER MEET</code>可以把一个节点加入到另一个节点的集群中，例如登录7000节点执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CLUSTER MEET 127.0.0.1 7001</span><br><span class="line">CLUSTER MEET 127.0.0.1 7002</span><br></pre></td></tr></table></figure>
+
+<p>执行完成之后7001和7002就会进入到7000所在的集群：<br><img src="/imgs/7808098-3054e7206f782902.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/200" alt></p>
+<p><code>CLUSTER MEET</code>具体流程：</p>
+<ul>
+<li>登录7000节点，发送<code>CLUSTER MEET 127.0.0.1 7001</code>命令</li>
+<li>7000节点向7001节点发送一个<code>MEET</code>消息，请求让7001加入自己所在的集群</li>
+<li>7001节点收到<code>MEET</code>消息后，同意加入7000的集群，回复一个<code>PONG</code></li>
+<li>7000节点收到7001的<code>PONG</code>后，知道7001同意加入自己的集群，再向7001发送一个<code>PING</code>，告诉7001自己已经收到回复了。</li>
+<li>7000向自己集群的所有其他节点（如果有的话）发送通知，告诉它们7001已经加入集群</li>
+<li>其它节点收到通知到，都会向7001发送<code>MEET</code>命令，这样，最终所有的节点都会与7001相互认识</li>
+</ul>
+<h1 id="二-槽"><a href="#二-槽" class="headerlink" title="二 槽"></a>二 槽</h1><p>在集群模式下，redis中的每个节点并不会保存所有的数据，而是只保存一部分。在redis中，数据库被分为16384个槽，每个节点只会保存一部分槽的数据，每个槽数据只会被一个节点保存。</p>
+<h3 id="2-1-槽指派"><a href="#2-1-槽指派" class="headerlink" title="2.1 槽指派"></a>2.1 槽指派</h3><p>使用<code>CLUSTER ADDSLOTS</code>命令，可以把某一些槽交给指点节点负责，例如登录7000执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CLUSTER ADDSLOTS 0 1 2 3 4 ... 5000</span><br></pre></td></tr></table></figure>
+
+<p>会把0-5000槽交给7000节点处理。（在哪个节点上执行的命令，对应的槽就会交给这个节点处理）<br>同时执行这个命令后，7000节点还会给集群中的其它节点发消息，告诉它们，0-5000槽由它负责处理<br><img src="/imgs/7808098-57cae182eba874b9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300" alt></p>
+<p>当16384个槽都指派给了节点处理后，整个集群就会处于上线模式，只要有一个槽没有节点处理，整个集群就会处于下线模式。</p>
+<h3 id="2-2-执行命令"><a href="#2-2-执行命令" class="headerlink" title="2.2 执行命令"></a>2.2 执行命令</h3><p>当客户端向集群中某个节点发送命令要求读/写某个key时，这个节点会计算出这个key的数据应该存放在哪个槽中，然后判断：</p>
+<ul>
+<li>如果这个槽由自己负责，则处理请求</li>
+<li>如果不由自己负责，则找出是由谁负责的，然后向客户端返回一个MOVED错误，把客户端引导到正确的节点上去</li>
+</ul>
+<p>假设我们通过<code>CLUSTER ADDSLOTS</code>命令，把0-5000交给了7000节点，5001-1000交给了7001节点，而10001-16384 交给了7002节点。</p>
+<p>如果客户端登录7000节点，发送以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET msg &quot;hello world&quot;</span><br></pre></td></tr></table></figure>
+
+<p>7000节点会计算出msg这个key所属的槽，msg这个key应该是放在6257槽中的，不是由自己负责的，则它会向客户端返回一个MOVED错误。<br><img src="/imgs/7808098-40c68e0e987c5f0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/500" alt></p>
+<p><strong>计算key属于哪个槽是用<a href="https://www.cnblogs.com/esestt/archive/2007/08/09/848856.html" target="_blank" rel="noopener">CRC16算法</a>计算的</strong></p>
+<h1 id="三-槽的重新分配"><a href="#三-槽的重新分配" class="headerlink" title="三 槽的重新分配"></a>三 槽的重新分配</h1><h3 id="3-1-重新分配的过程"><a href="#3-1-重新分配的过程" class="headerlink" title="3.1 重新分配的过程"></a>3.1 重新分配的过程</h3><p><code>redis-trib</code>命令可以在不下线集群的情况下把一个槽从一个节点转移到另一个节点，例如，把2500槽从7000节点转移到7001节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-trib.rb reshard --from 7000 --to 7001 --slots 2500</span><br></pre></td></tr></table></figure>
+
+<p>之后redis-trib会分以下几步把槽7000中的所有内容转移到7001中：</p>
+<ul>
+<li>向7001节点发送IMPORTING命令，通知它准备接收新槽</li>
+<li>向7000节点发送MIGRATING命令，通知它准备好把2500号槽的数据转交出去</li>
+<li>从7000节点中一次性取出多个键值数据，然后一个个一调用MIGRATE命令把数据转移到7001中</li>
+<li>重复上一步，直到把所有的数据都转到7001节点中去</li>
+</ul>
+<h3 id="3-2-重新分配过程中请求的处理"><a href="#3-2-重新分配过程中请求的处理" class="headerlink" title="3.2 重新分配过程中请求的处理"></a>3.2 重新分配过程中请求的处理</h3><p>如果在把2500槽从7000转移到7001的过程中，刚好有一个客户端向7000节点请求获取某个key的数据，并且这个key刚好在2500这个槽中，则这时候，7000节点会：</p>
+<ul>
+<li>如果自身保存着对应key的数据，则会执行请求</li>
+<li>如果没有对应key的数据，说明可能被转到7001节点了，返回一个ASK错误，然后客户端会向7001节点重新请求数据<br><img src="/imgs/7808098-24aaceadb81cfa16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt></li>
+</ul>
+<h1 id="四-复制与故障转移"><a href="#四-复制与故障转移" class="headerlink" title="四 复制与故障转移"></a>四 复制与故障转移</h1><h3 id="4-1-配置从节点"><a href="#4-1-配置从节点" class="headerlink" title="4.1 配置从节点"></a>4.1 配置从节点</h3><p>在使用集群模式时，也可以为某一个节点指定从节点，例如可以为7000节点添加两个从节点：<br>新启动两个节点，端口号为7003和7004，并分别在它们上执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CLUSTER REPLICATE 7000</span><br></pre></td></tr></table></figure>
+
+<p>则这两个节点就会成为7000的从节点，复制7000节点的数据。像7000，7001，7002这些就称为主节点，而7003，7004就称为从节点。</p>
+<h3 id="4-2-故障检测与恢复"><a href="#4-2-故障检测与恢复" class="headerlink" title="4.2 故障检测与恢复"></a>4.2 故障检测与恢复</h3><p>集群中的节点会定期的向集群中的其它节点发PING消息，以此来检测对方是否在线，如果接收PING消息的节点没有在规定时间内回复PONG，则发送PING消息的节点就会把接收PING消息的节点标记为疑似下线。</p>
+<p>同时节点之间还会交换疑似下线的信息，如果集群中的大多数节点都认为某一个节点疑似下线了，就会认为这个节点已经下线。</p>
+<p>如果一个从节点发送自己的主节点处于已下线状态，就会向其它的<strong>主节点</strong>发送请求，要求它们选举自己为新的主节点。</p>
+<p>当一个主节点收到某个从节点要求晋升为新主节点的请求后，如果这个主节点之前没有同意过其它从节点的晋升请求，那么它就会同意这次请求，否则它会拒绝这次请求。</p>
+<p>如果一个从节点得到了过半数的主节点的同意，则它就会成为新的主节点，然后向其他从节点发送命令，让他们复制自己。</p>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#redis" >
+    <span class="tag-code">redis</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/08/06/redis01/">
+        <span class="nav-arrow">← </span>
+        
+          《redis入门指南 》读书笔记
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/08/10/redis03/">
+        
+          redis 哨兵机制和主从模式
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#一-节点"><span class="toc-nav-text">一 节点</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-1-启动集群模式"><span class="toc-nav-text">1.1 启动集群模式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-2-向集群中加入节点"><span class="toc-nav-text">1.2 向集群中加入节点</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#二-槽"><span class="toc-nav-text">二 槽</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-1-槽指派"><span class="toc-nav-text">2.1 槽指派</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-2-执行命令"><span class="toc-nav-text">2.2 执行命令</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#三-槽的重新分配"><span class="toc-nav-text">三 槽的重新分配</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-重新分配的过程"><span class="toc-nav-text">3.1 重新分配的过程</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-重新分配过程中请求的处理"><span class="toc-nav-text">3.2 重新分配过程中请求的处理</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#四-复制与故障转移"><span class="toc-nav-text">四 复制与故障转移</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-1-配置从节点"><span class="toc-nav-text">4.1 配置从节点</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-2-故障检测与恢复"><span class="toc-nav-text">4.2 故障检测与恢复</span></a></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2019/08/10/redis04/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "redis 集群",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
