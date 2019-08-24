@@ -180,7 +180,46 @@
 <li>mysql事务隔离级别，脏读，幻读，不可重复读问题</li>
 <li>mysql主从复制原理，涉及到哪些线程</li>
 </ul>
-<p>笔试题：<br>有一张User表如下，请删除名称重复的数据，即同名的数据只保留一条<br>id|name|sex<br>-|-|-<br>1|张三|F<br>2|张三|F<br>3|李四|M<br>4|李四|M<br>5|李四|M<br>6|王五|F</p>
+<p>笔试题：<br>有一张User表如下，请删除名称重复的数据，即同名的数据只保留一条</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>name</th>
+<th>sex</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>张三</td>
+<td>F</td>
+</tr>
+<tr>
+<td>2</td>
+<td>张三</td>
+<td>F</td>
+</tr>
+<tr>
+<td>3</td>
+<td>李四</td>
+<td>M</td>
+</tr>
+<tr>
+<td>4</td>
+<td>李四</td>
+<td>M</td>
+</tr>
+<tr>
+<td>5</td>
+<td>李四</td>
+<td>M</td>
+</tr>
+<tr>
+<td>6</td>
+<td>王五</td>
+<td>F</td>
+</tr>
+</tbody></table>
 <p>这里考的是对group by 语句的使用</p>
 <blockquote>
 <p>DELETE FROM user WHERE id NOT IN (SELECT max(id) FROM User GROUP BY name)</p>
@@ -215,17 +254,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2019/08/10/redis02/">
+      <a class="nav-left" href="/2019/08/10/redis03/">
         <span class="nav-arrow">← </span>
         
-          redis 数据结构
+          redis 哨兵机制和主从模式
         
       </a>
     
     
-      <a class="nav-right" href="/2019/08/24/job_interview02/">
+      <a class="nav-right" href="/2019/08/24/job_interview01/">
         
-          面试常见的问题 — 并发编程
+          面试常问的内容 — Java基础
         
         <span class="nav-arrow"> →</span>
       </a>
