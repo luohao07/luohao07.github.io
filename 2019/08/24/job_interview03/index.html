@@ -10,7 +10,7 @@
   
   <title>
     
-      面试常见的问题 — 并发编程 | luohao07
+      面试重点 — mysql和redis | luohao07
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -130,7 +130,7 @@
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
 <!-- <div id="article-banner" style="display: none">
-  <h2>面试常见的问题 — 并发编程</h2>
+  <h2>面试重点 — mysql和redis</h2>
   <p class="post-date">2019-08-24</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
@@ -148,41 +148,54 @@
   <!-- Article START -->
   <article class="post-article" style="margin-top: 60px">
     <section class="markdown-content">
-      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">面试常见的问题 — 并发编程
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">面试重点 — mysql和redis
       </p>
       <p class="article-date" style="text-align: right">August 24, 2019</p>
       <hr />
-      <p>重点内容：</p>
+      <h1 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h1><p>重点知识</p>
 <ul>
-<li>线程池的状态，以及与之相关的一些方法</li>
-<li>synchronized和volatile关键字，作用和原理</li>
-<li>Object中的wait, notify, notifyAll的使用，只需要知道怎么使用即可</li>
-<li>Java中的Unsafe类，主要是搞清楚里面的CAS操作</li>
-<li>并发包中AQS锁，以及使用AQS实现的ReentrantLock和ReadWriteLock，最好看下源码，这块很重要</li>
-<li>与锁对应的Condition类，以及它的实现原理，使用方式，与Object中wait/notify的区别</li>
-<li>并发包中的集合类，ConcurrentHashMap（非常重要），CopyOnWriteArrayList（不太重要），都可以看看源码</li>
-<li>并发包中的BlockingQueue，以及主要的两个实现类，ArrayListBlockingQueue和LinkedListBlockingQueue，实现方式，看看源码</li>
-<li>并发包中的线程池ThreadPoolExecutor，核心字段有哪些，有什么用，看看源码（这一块也非常重要）</li>
-<li>并发包中的原子类，主要要知道使用方式</li>
-<li>LockSupport的使用，以及它与Thread.sleep的区别</li>
+<li>redis支持的数据类型</li>
+<li>redis的缓存淘汰机制</li>
+<li>redis 备份方式以及实现原现</li>
+<li>redis主从模式的实现方式</li>
+<li>redis集群（多主）的实现方式</li>
 </ul>
-<p>要搞清楚这些内容，估计需要20个小时，除了第一二点外，其它内容都是Java并发包中的内容，推荐看书《java并发编程的艺术》，看完这本书估计要十几个小时</p>
-<p>基本上看完这本书，并发的面试就搞定了<br>链接：<a href="https://pan.baidu.com/s/14G74VhMiL0D2fGuqf-ABzQ" target="_blank" rel="noopener">https://pan.baidu.com/s/14G74VhMiL0D2fGuqf-ABzQ</a><br>提取码：2tru</p>
-<p>还有以前写的总结的文章<br><a href="http://www.luohao07.com/2019/01/21/concurrent/">http://www.luohao07.com/2019/01/21/concurrent/</a></p>
-<p>经常遇到的面试题：</p>
-<ol>
-<li>线程有哪些状态，以及状态的流转有哪些</li>
-<li>AQS锁是什么，里面的数据结构是怎么样的，以及它加锁释放锁的核心流程</li>
-<li>重入锁是什么意思，ReentrantLock实现公平锁和非公平锁有什么区别</li>
-<li>ReentrantLock相比synchronized，有哪些优缺点</li>
-<li>线程池有哪几种，有什么区别</li>
-<li>创建线程池时需要哪些参数，有什么用</li>
-<li>ConcurrentHashMap是怎么做到线程安全的，JDK1.7和1.8的实现有什么区别</li>
-<li>CAS操作是什么</li>
-<li>volatile关键字的作用是什么，原理是什么样的</li>
-<li>Condition是什么，它和Object中的notify/wait有什么区别</li>
-<li>如何使用Condition或者Object的notify/wait实现一个生产者消费者模型</li>
-</ol>
+<p>面试题：</p>
+<ul>
+<li>你知识redis中支持哪些数据结构吗</li>
+<li>redis中缓存的淘汰机制有哪些</li>
+<li>redis的复制方式有哪些，是怎么实现的</li>
+</ul>
+<p>推荐看书：</p>
+<ul>
+<li>《redis入门指南》入门级的书，估计三四个小时就能看完了，看完之后应对面试应该没什么问题</li>
+<li>《redis设计与实现》建议看完《redis入门指南》再看，讲得稍微深入一点，系统全面一点</li>
+</ul>
+<h1 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h1><p>重点内容：</p>
+<ul>
+<li>关联查询，左右，右外，全外和内关联的作用及区别</li>
+<li>对group by 语句的使用，笔试中经常会考到</li>
+<li>innodb中的索引结构，B+树结构，以及索引为什么要用B+树，聚集索引和非聚集索引的区别</li>
+<li>mysql查询优化的内容</li>
+<li>mysql事务隔离级别，脏读，幻读，不可重复读问题</li>
+<li>mysql主从复制原理，涉及到哪些线程</li>
+</ul>
+<p>笔试题：<br>有一张User表如下，请删除名称重复的数据，即同名的数据只保留一条<br>id|name|sex<br>-|-|-<br>1|张三|F<br>2|张三|F<br>3|李四|M<br>4|李四|M<br>5|李四|M<br>6|王五|F</p>
+<p>这里考的是对group by 语句的使用</p>
+<blockquote>
+<p>DELETE FROM user WHERE id NOT IN (SELECT max(id) FROM User GROUP BY name)</p>
+</blockquote>
+<p>面试题：</p>
+<ul>
+<li>mysql的索引结构是什么，聚集索引和非聚集索引有什么区别，为什么要用B+树（非常重要，10次面试有8次会问到）</li>
+<li>mysql的事务隔离级别有哪些？（这种问题最好不要只回答，有XXXX四种，还要讲一下每一种的特点）</li>
+<li>mysql主从复制原理，涉及到哪些线程</li>
+</ul>
+<p>推荐看书：</p>
+<ul>
+<li>《mysql必知必会》：一些基础知识，看完之后并不一定能应对面试</li>
+<li>《mysql技术内幕innodb存储引擎》：这本书写得非常深，关键看下索引的那一章，想全部看完应该非常要时间，但是如果全看完看懂，那mysql这一块可以算是大师级的人物了</li>
+</ul>
 
     </section>
     <!-- Tags START -->
@@ -190,10 +203,6 @@
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#并发编程" >
-    <span class="tag-code">并发编程</span>
-  </a>
-
   <a href="/tags#面试" >
     <span class="tag-code">面试</span>
   </a>
@@ -206,17 +215,17 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2019/08/24/job_interview03/">
+      <a class="nav-left" href="/2019/08/10/redis02/">
         <span class="nav-arrow">← </span>
         
-          面试重点 — mysql和redis
+          redis 数据结构
         
       </a>
     
     
-      <a class="nav-right" href="/2019/08/24/job_interview01/">
+      <a class="nav-right" href="/2019/08/24/job_interview02/">
         
-          面试常问的内容 — Java基础
+          面试常见的问题 — 并发编程
         
         <span class="nav-arrow"> →</span>
       </a>
@@ -243,7 +252,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="nav">none</ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#redis"><span class="toc-nav-text">redis</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#mysql"><span class="toc-nav-text">mysql</span></a></li></ol>
     
   </div>
 </aside>
@@ -253,7 +262,7 @@
 
 <script>
   (function () {
-    var url = 'http://www.luohao07.com/2019/08/24/job_interview02/';
+    var url = 'http://www.luohao07.com/2019/08/24/job_interview03/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -308,7 +317,7 @@
     var gitmentConfig = "luohao07";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "面试常见的问题 — 并发编程",
+        id: "面试重点 — mysql和redis",
         owner: "luohao07",
         repo: "luohao07.github.io",
         oauth: {
