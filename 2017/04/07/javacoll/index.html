@@ -153,7 +153,35 @@
       <p class="article-date" style="text-align: right">April 7, 2017</p>
       <hr />
       <h2 id="一-java-集合框架图"><a href="#一-java-集合框架图" class="headerlink" title="一 java 集合框架图"></a>一 java 集合框架图</h2><p><img src="/imgs/7808098-ed470cc466a1fa98.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h2 id="二-List"><a href="#二-List" class="headerlink" title="二 List"></a>二 List</h2><h4 id="2-1-ArrayList"><a href="#2-1-ArrayList" class="headerlink" title="2.1 ArrayList"></a>2.1 ArrayList</h4><p>底层数据结构：线性表(数组)<br>线程安全：否<br>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>elementData|Object[]|保存数据|-<br>size|int|长度|-<br>modCount|int|被修改的次数|-</p>
+<h2 id="二-List"><a href="#二-List" class="headerlink" title="二 List"></a>二 List</h2><h4 id="2-1-ArrayList"><a href="#2-1-ArrayList" class="headerlink" title="2.1 ArrayList"></a>2.1 ArrayList</h4><p>底层数据结构：线性表(数组)<br>线程安全：否<br>核心字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>elementData</td>
+<td>Object[]</td>
+<td>保存数据</td>
+<td>-</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>长度</td>
+<td>-</td>
+</tr>
+<tr>
+<td>modCount</td>
+<td>int</td>
+<td>被修改的次数</td>
+<td>-</td>
+</tr>
+</tbody></table>
 <p> <strong>初始化过程：</strong><br>若带有容量参数，则使用此容量来初始化elementData，否则把elementData置为空数组</p>
 <p><strong>扩容方式：</strong></p>
 <ul>
@@ -170,7 +198,35 @@
 <h4 id="2-2-LinkedList"><a href="#2-2-LinkedList" class="headerlink" title="2.2 LinkedList"></a>2.2 LinkedList</h4><p>底层数据结构：双向链表</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">private static class Node&lt;E&gt; &#123;</span><br><span class="line">    E item;</span><br><span class="line">    Node&lt;E&gt; next;</span><br><span class="line">    Node&lt;E&gt; prev;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>线程安全：否<br>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>size|int|长度|-<br>first|Node|头节点|-<br>last|Node|尾节点|-</p>
+<p>线程安全：否<br>核心字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>size</td>
+<td>int</td>
+<td>长度</td>
+<td>-</td>
+</tr>
+<tr>
+<td>first</td>
+<td>Node</td>
+<td>头节点</td>
+<td>-</td>
+</tr>
+<tr>
+<td>last</td>
+<td>Node</td>
+<td>尾节点</td>
+<td>-</td>
+</tr>
+</tbody></table>
 <ul>
 <li>LinkedList的初始化没有任何操作</li>
 <li>只有一个节点时，first和last都指向这一个节点</li>
@@ -181,7 +237,47 @@
 <p><strong>扩容：</strong><br>初始化时可指定每次扩容增加的容量数，如果没有指定，则每次都翻倍</p>
 <p><strong>线程安全方式：</strong><br>为每个方法都加上synchronized关键字</p>
 <h2 id="三-Map"><a href="#三-Map" class="headerlink" title="三 Map"></a>三 Map</h2><h4 id="3-1-HashMap"><a href="#3-1-HashMap" class="headerlink" title="3.1 HashMap"></a>3.1 HashMap</h4><p>底层数据结构：桶链结构，跳表<br>是否线程安全：否</p>
-<p>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>table|Node[]|底层数据，即桶链|-<br>entrySet|Set&lt;Map.Entry&lt;K,V&gt;&gt;|所有的节点数据|与table重复，主要是为了entrySet()和values()方法<br>size|int|数据量|-<br>threshold|int|扩容阀值|-<br>loadFactor|float|扩容因子|-</p>
+<p>核心字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>table</td>
+<td>Node[]</td>
+<td>底层数据，即桶链</td>
+<td>-</td>
+</tr>
+<tr>
+<td>entrySet</td>
+<td>Set&lt;Map.Entry&lt;K,V&gt;&gt;</td>
+<td>所有的节点数据</td>
+<td>与table重复，主要是为了entrySet()和values()方法</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>数据量</td>
+<td>-</td>
+</tr>
+<tr>
+<td>threshold</td>
+<td>int</td>
+<td>扩容阀值</td>
+<td>-</td>
+</tr>
+<tr>
+<td>loadFactor</td>
+<td>float</td>
+<td>扩容因子</td>
+<td>-</td>
+</tr>
+</tbody></table>
 <p><strong>hash函数：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);</span><br></pre></td></tr></table></figure>
 
@@ -205,7 +301,42 @@
 <li>这是一种比较复杂的平衡树，但是又不是绝对平衡，参考<a href="https://www.jianshu.com/p/e136ec79235c" target="_blank" rel="noopener">30张图带你彻底理解红黑树
 </a></li>
 </ul>
-<h4 id="3-2-TreeMap"><a href="#3-2-TreeMap" class="headerlink" title="3.2 TreeMap"></a>3.2 TreeMap</h4><p>排序Map，底层采用红黑树实现，线程不安全<br>核心字段：<br>字段名|类型|作用|备注<br>-|-|-|-<br>comparator|Comparator|比较器，用于排序|-<br>root|Entry|根节点|-<br>size|int|数据长度|-<br>modCount|int|修改次数|-<br>实现了NavigableMap，可以获取指定Key范围的数据</p>
+<h4 id="3-2-TreeMap"><a href="#3-2-TreeMap" class="headerlink" title="3.2 TreeMap"></a>3.2 TreeMap</h4><p>排序Map，底层采用红黑树实现，线程不安全<br>核心字段：</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>comparator</td>
+<td>Comparator</td>
+<td>比较器，用于排序</td>
+<td>-</td>
+</tr>
+<tr>
+<td>root</td>
+<td>Entry</td>
+<td>根节点</td>
+<td>-</td>
+</tr>
+<tr>
+<td>size</td>
+<td>int</td>
+<td>数据长度</td>
+<td>-</td>
+</tr>
+<tr>
+<td>modCount</td>
+<td>int</td>
+<td>修改次数</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<p>实现了NavigableMap，可以获取指定Key范围的数据</p>
 <h4 id="3-3-其他Map"><a href="#3-3-其他Map" class="headerlink" title="3.3 其他Map"></a>3.3 其他Map</h4><ul>
 <li>IdentityHashMap:<br>与HashMap的区别在于，它是使用==来判断两个key是否相同，而HashMap使用的是equals</li>
 <li>LinkedHashMap<br>继续自HashMap，但是使用链表记录了插入顺序，即给每个Entry再添加了before, after参数。</li>
