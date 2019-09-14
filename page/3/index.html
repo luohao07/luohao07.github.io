@@ -132,6 +132,97 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/2018/12/11/javaconcurrent03/">并发包学习 读写锁—ReentrantReadWriteLock</a>
+      </h2>
+      <p class="article-date">December 11, 2018</p>
+      
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 读写锁 Java中读写锁的特征：
+
+读读不互斥，读写互斥，写写互斥
+支持公平锁与平公平锁
+支持重入
+支持锁降级，但是不支持锁升级
+
+锁降级指的是先获取写锁，在不释放写锁的情况下再获取读锁， ...
+        
+      </div>
+      <a class="more" href="/2018/12/11/javaconcurrent03/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/12/07/javaconcurrent02/">并发包学习 ReentrantLock</a>
+      </h2>
+      <p class="article-date">December 7, 2018</p>
+      
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 ReentrantLock的特性
+支持重入：指的是同一个线程多次lock()可以成功，并且lock多少次后续就需要unlock才能释放锁
+支持公平锁和非公平锁：公平锁是指先调用lock的线 ...
+        
+      </div>
+      <a class="more" href="/2018/12/07/javaconcurrent02/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/12/02/javaconcurrent01/">并发包学习 AQS锁 - AbstractQueuedSynchronizer</a>
+      </h2>
+      <p class="article-date">December 2, 2018</p>
+      
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 什么是AQSAQS即AbstractQueuedSynchronizer，在Java并发包中的一个基础类，并发包中的所有锁相关类，如ReentrantLock，ReentrantReadW ...
+        
+      </div>
+      <a class="more" href="/2018/12/02/javaconcurrent01/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
+        <a href="/2018/06/14/ConcurrentHashMap/">ConcurrentHashMap源码解析</a>
+      </h2>
+      <p class="article-date">June 14, 2018</p>
+      
+        
+  <a href="/tags#并发编程" >
+    <span class="tag-code">并发编程</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 1.7版本的实现方式
+采用分段锁机制，底层有两个对象，一个是Segment对象，另一个是HashEntry对象
+一个Segment就是一把锁，它继承自ReentrantLock，每个Seg ...
+        
+      </div>
+      <a class="more" href="/2018/06/14/ConcurrentHashMap/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/2017/04/07/javacoll/">java 集合框架梳理</a>
       </h2>
       <p class="article-date">April 7, 2017</p>

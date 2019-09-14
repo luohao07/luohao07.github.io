@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      计算机组成原理—IO接口 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    <script src="/js/gitment.js"></script>
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2>计算机组成原理—IO接口</h2>
+  <p class="post-date">2019-09-14</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">计算机组成原理—IO接口
+      </p>
+      <p class="article-date" style="text-align: right">September 14, 2019</p>
+      <hr />
+      <h1 id="一-IO接口的基本组成"><a href="#一-IO接口的基本组成" class="headerlink" title="一 IO接口的基本组成"></a>一 IO接口的基本组成</h1><p><img src="/imgs/7808098-a9b89b3cfd8fef1c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="IO接口的基本组成"></p>
+<ul>
+<li>设备状态标记用于标记设备是否准备好数据</li>
+<li>数据缓冲寄存器DBR用于缓存准备好的数据</li>
+</ul>
+<h1 id="二-程序查询方式"><a href="#二-程序查询方式" class="headerlink" title="二 程序查询方式"></a>二 程序查询方式</h1><h3 id="2-1-程序查询方式步骤"><a href="#2-1-程序查询方式步骤" class="headerlink" title="2.1 程序查询方式步骤"></a>2.1 程序查询方式步骤</h3><ul>
+<li>步骤一：CPU发送命令到IO接口，通知需要从设备中读取数据</li>
+<li>步骤二：IO接口从设备中读取数据，同时CPU不断检查IO接口的设备状态标记位。</li>
+<li>步骤三：IO接口把设备的数据读取到数据缓冲寄存器后，把设备状态置为就绪</li>
+<li>步骤四：CPU检测到数据已经就绪后从数据缓冲寄存器中读取数据。</li>
+</ul>
+<p><img src="/imgs/7808098-da1eb4acb83ecff5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt="image.png"></p>
+<h3 id="2-2-程序查询方式的电路"><a href="#2-2-程序查询方式的电路" class="headerlink" title="2.2 程序查询方式的电路"></a>2.2 程序查询方式的电路</h3><p><img src="/imgs/7808098-0ef3f154eac8888b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="image.png"></p>
+<p>步骤一：启动命令有效，SEL有效，则左则与门生效输出高电平<br>步骤二：D是设备状态标记位，应该是一个类似与门的东西，经过步骤一后右则为高电平，左则为低电平，所以输出为0，表示还没有准备好数据。<br>步骤三：B应该是一个异或门电路，经过步骤一后左则为高电平，右则为低电平，所以输出为1，启动设备。<br>步骤四：设备工作并输入数据到DBR，完成后发送设备工作结束信号。<br>步骤五：经过步骤四之后，D的左右两则都是高电平，所以它输出为1，表示已经准备好数据。<br>步骤六：经过步骤四后，B的左右都为高电平，所以他输出0，停止发送启动设备的命令。<br>步骤七：CPU检测到D输出的高电平后，与IO接口交换数据。</p>
+<p>这个电路比较简单，实际上比这复杂很多</p>
+<h1 id="三-中断方式"><a href="#三-中断方式" class="headerlink" title="三 中断方式"></a>三 中断方式</h1><h3 id="3-0-CPU的中断"><a href="#3-0-CPU的中断" class="headerlink" title="3.0 CPU的中断"></a>3.0 CPU的中断</h3><p>待补充，就是最基本的那个中断</p>
+<h3 id="3-1-基本电路"><a href="#3-1-基本电路" class="headerlink" title="3.1 基本电路"></a>3.1 基本电路</h3><p><img src="/imgs/7808098-5d15d476bec168a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt></p>
+<ul>
+<li>INTR：中断请求触发器，用于向CPU发送中断请求</li>
+<li>MASK：中断屏蔽触发器，用于标记设备是否被屏蔽</li>
+<li>D：IO接口的中断标记位，与上面的程序查询方式类似，受到设备本身的控制</li>
+</ul>
+<p>中断流程：</p>
+<ul>
+<li>当D输出高电平时，说明设备已经准备好数据，如果该设备没有被屏蔽，则MASK信号也会为高电平</li>
+<li>MASK高电平 + D高电平 =&gt; 中间的与非门（图中的[&amp;]）输出低电平</li>
+<li>与非门低电平 =&gt; 上面自带高电平的与非门（图中的[1]）输出高电平</li>
+<li>[1]输出高电平 + CPU查询信号 =&gt; 中断请求输出高电平</li>
+</ul>
+<h3 id="3-2-链式排队器"><a href="#3-2-链式排队器" class="headerlink" title="3.2 链式排队器"></a>3.2 链式排队器</h3><p><img src="/imgs/7808098-373cdde20f868673.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/500" alt></p>
+<p>$\overline{INTR}$ : 上面3.2的电路图中中断请求信号输出值取反<br>每个设备包含一个非门和一个与非门</p>
+<p>当一个设备没有被中断时：</p>
+<ul>
+<li>[1]的左则为低电平，右则输出高电平，所以向上的那根信号线INTP输出为1</li>
+<li>$\overline{INTR}$输出高电平，所以与非门[&amp;]输出为0</li>
+</ul>
+<p>当一个设备被中断时：</p>
+<ul>
+<li>[1]的左则为低电平，右则输出高电平，所以向INTP还是输出1</li>
+<li>$\overline{INTR}$输出低电平，则与非门[&amp;]输出为高电平</li>
+<li>一量[&amp;]输出高电平，则下一个设备的[1]输出为低电平，则下一个设备INTP输出为低电平。<br>所以当一个设备被中断时，它以它前面的设备INTP输出都是高电平，而它之后的设备INTP都输出了低电平。即当链式排队器输出为1111111000000时，最后一个1是所有输出了中断信号的设备中优先级最高的。</li>
+</ul>
+<p>查找被中断的设备中优先级最高的：<br><img src="/imgs/7808098-c4ee2c19c3e6999a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/500" alt></p>
+<p>把INTP信号与输入的INTR(注意不取反)做与操作，假如排队器输出的内容是11110000，则：</p>
+<ul>
+<li>前面三个1虽然INTP输出为1，但是INTR为0，所以&amp;操作后的值还是0而</li>
+<li>后面4个0INTP输出的值就是0，所以输出还是0</li>
+<li>最后的那一个1，INTP输出为1，且INTR也为1，所以输出为1</li>
+<li>因此得到的结果就是00010000</li>
+</ul>
+<h3 id="3-3-找到中断程序入口"><a href="#3-3-找到中断程序入口" class="headerlink" title="3.3 找到中断程序入口"></a>3.3 找到中断程序入口</h3><p><img src="/imgs/7808098-79a5f73c16e8f15d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt><br>几个概念：</p>
+<ul>
+<li>中断向量：保存中断信息的寄存器的集合，寄存器里面保存了中断程序地址的跳转信息等数据</li>
+<li>向量地址：中断向量寄存器的位置</li>
+<li>中断向量地址形成部件，用于把排队器输入的信号（如上面说的00010000）转成向量地址</li>
+</ul>
+<p>步骤：</p>
+<ul>
+<li>步骤一：排队器输入信号，中断向量地址部件输出向量地址</li>
+<li>步骤二：CPU读取向量地址的信息，如12H，则找到内存中的12H的数量</li>
+<li>步骤三：CPU根据向量地址的内容跳转，例如12H中保存的数据是JMP 200，则跳转到200，这个位置就是中断程序的开始地址。</li>
+</ul>
+<h3 id="3-4-总体流程图"><a href="#3-4-总体流程图" class="headerlink" title="3.4 总体流程图"></a>3.4 总体流程图</h3><p><img src="/imgs/7808098-8f58966c9c102fde.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt></p>
+<h1 id="四-DMA方式"><a href="#四-DMA方式" class="headerlink" title="四 DMA方式"></a>四 DMA方式</h1><h3 id="4-1-DMA接口的组成"><a href="#4-1-DMA接口的组成" class="headerlink" title="4.1 DMA接口的组成"></a>4.1 DMA接口的组成</h3><p><img src="/imgs/7808098-f12eda37a1c52207.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/525" alt="image.png"></p>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#计算机组成原理" >
+    <span class="tag-code">计算机组成原理</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/09/14/ccp04/">
+        <span class="nav-arrow">← </span>
+        
+          计算机组成原理—存储器的体系结构
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/09/14/ccp6/">
+        
+          计算机组成原理—计算机编码
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#一-IO接口的基本组成"><span class="toc-nav-text">一 IO接口的基本组成</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#二-程序查询方式"><span class="toc-nav-text">二 程序查询方式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-1-程序查询方式步骤"><span class="toc-nav-text">2.1 程序查询方式步骤</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-2-程序查询方式的电路"><span class="toc-nav-text">2.2 程序查询方式的电路</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#三-中断方式"><span class="toc-nav-text">三 中断方式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-0-CPU的中断"><span class="toc-nav-text">3.0 CPU的中断</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-1-基本电路"><span class="toc-nav-text">3.1 基本电路</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-2-链式排队器"><span class="toc-nav-text">3.2 链式排队器</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-3-找到中断程序入口"><span class="toc-nav-text">3.3 找到中断程序入口</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-4-总体流程图"><span class="toc-nav-text">3.4 总体流程图</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#四-DMA方式"><span class="toc-nav-text">四 DMA方式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-1-DMA接口的组成"><span class="toc-nav-text">4.1 DMA接口的组成</span></a></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2019/09/14/ccp05/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "计算机组成原理—IO接口",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

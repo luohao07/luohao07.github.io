@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      计算机组成原理—存储器的体系结构 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    <script src="/js/gitment.js"></script>
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2>计算机组成原理—存储器的体系结构</h2>
+  <p class="post-date">2019-09-14</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">计算机组成原理—存储器的体系结构
+      </p>
+      <p class="article-date" style="text-align: right">September 14, 2019</p>
+      <hr />
+      <h1 id="一-概述"><a href="#一-概述" class="headerlink" title="一 概述"></a>一 概述</h1><h4 id="1-1-分类"><a href="#1-1-分类" class="headerlink" title="1.1 分类"></a>1.1 分类</h4><p> 按照存储介质分类：</p>
+<ul>
+<li>半导体存储器：分为TTL, MOC两种 易失，通常用于内存和高速缓存</li>
+<li>磁表面存储器：也就是普通的硬盘所采用的存储器</li>
+<li>磁蕊存储器：以前比较牛逼的存储器，对计算机发展有很大贡献，已经不用了</li>
+<li>光盘存储器：光盘</li>
+</ul>
+<p>按照随机访问和串行访问分类：</p>
+<ul>
+<li>随机存储器：存取时间与物理地址无关<ul>
+<li>随机存储器：可读可写</li>
+<li>只读存储器：只能读不能写</li>
+</ul>
+</li>
+<li>顺序存储器：存取时间与物理地址有关<ul>
+<li>顺序存取存储器：完全按顺序读</li>
+<li>直接存取存储器：先定位，然后按顺序读</li>
+</ul>
+</li>
+</ul>
+<p>按照在计算机中的作用来分：<br><img src="/imgs/7808098-236a44e78fb59971.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="计算机中的存储器"></p>
+<h4 id="1-2-层次结构"><a href="#1-2-层次结构" class="headerlink" title="1.2 层次结构"></a>1.2 层次结构</h4><p><img src="/imgs/7808098-a5d19cffbb9309dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="层次结构"></p>
+<p><img src="/imgs/7808098-a3fb039934fd93da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt></p>
+<blockquote>
+<p>为了让计算机中的存储系统能同时满足容量大，速度快，价格便宜三个特点，采取了使用低价大容量低速存储器保存数据，而高价稍小容量高速存储器来作为缓存，而一级一级的缓存就构成了多层次的存储系统。</p>
+</blockquote>
+<blockquote>
+<p>各存储系统使用软硬件相结合的方式，让存储系统像一个完整的大容量，高速度，低价格的存储器，也就是说，对于某一个层次的程序员而言，存储层次结构是透明的。</p>
+</blockquote>
+<blockquote>
+<p>缓存与主存的结合，使用的是硬件结合，因为这一个层次的结合主要是处理速度方面的问题，所以需要快速的硬件结合方式。CPU在使用缓存主存结合工作时，面向的是主存的地址工作。</p>
+</blockquote>
+<blockquote>
+<p>主存和辅存的结合采用的是软硬件的方式结合。主存和辅存的结合体对处暴露的是虚拟的逻辑地址</p>
+</blockquote>
+<h1 id="二-主存"><a href="#二-主存" class="headerlink" title="二 主存"></a>二 主存</h1><h4 id="2-1-主存结构"><a href="#2-1-主存结构" class="headerlink" title="2.1 主存结构"></a>2.1 主存结构</h4><p>主存的基本结构：<br><img src="/imgs/7808098-ee24f592cd145f79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="主存的基本结构"></p>
+<p>主存与CPU的交互：<br><img src="/imgs/7808098-99a6fd6538bd19a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="主存与CPU的关系"></p>
+<h4 id="2-1-主存中的地址"><a href="#2-1-主存中的地址" class="headerlink" title="2.1 主存中的地址"></a>2.1 主存中的地址</h4><ul>
+<li>主存中一个存储单元称为一个字，通常不只一个字节，例如可能是4字节32位。</li>
+<li>主存中的每个字节都有地址。</li>
+<li>大端法：高位字节保存在低位地址中，以低位地址作为存储字的地址</li>
+<li>小端法：高位字节保存在高位地址中，以高位地址作为存储字的地址</li>
+</ul>
+<h4 id="2-3主存的性能指标"><a href="#2-3主存的性能指标" class="headerlink" title="2.3主存的性能指标"></a>2.3主存的性能指标</h4><ul>
+<li>存取时间：分为读取时间和写入时间<ul>
+<li>读取时间：从给出地址信号到有数据输出的时间</li>
+<li>写入时间：从给出地址信号到数据存放到指定位置的时间</li>
+</ul>
+</li>
+<li>存取周期：连续两次独立的存取操作的最小时间间隔</li>
+<li>存储器带宽</li>
+</ul>
+<p>存取时间通常比存取时间长</p>
+<h1 id="三-半导体存储器"><a href="#三-半导体存储器" class="headerlink" title="三 半导体存储器"></a>三 半导体存储器</h1><h4 id="3-1-结构"><a href="#3-1-结构" class="headerlink" title="3.1 结构"></a>3.1 结构</h4><p>下面是半导体存储器蕊片的结构图，一个存储器可能包含多个这样的蕊片<br><img src="/imgs/7808098-20a737d54c358ec2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="image.png"></p>
+<p>数据线：双向，输入或者输出数据，线的根数就是一次能输出的位数<br>地址线：单向，CPU输入地址时使用，线的根数就是这个蕊片中存储单元的数量<br>片选线：一个存储器可能有多个存储芯片，标记当前要的数据是不是在这个芯片中<br>读写控制线：用于控制读还是写</p>
+<p>多个蕊片可以通过复用片选线的方式组合成一个，例如：<br><img src="/imgs/7808098-faa8819eda67ca5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt></p>
+<h4 id="3-2-译码器"><a href="#3-2-译码器" class="headerlink" title="3.2 译码器"></a>3.2 译码器</h4><p>译码器：译码器是存储器工作的核心之一<br><img src="/imgs/7808098-b2160c812a56ed3f.png?imageMogr2/auto-orient/strip%7CimageView2/2/h/400" alt="image.png"></p>
+<p>例如图中的译码器，输入为$A_0$到$A_3$，总共四根线，而输出为0-15共16根线。</p>
+<ul>
+<li>当4输入线都不加电时，输入的值就相当于是0000，这时只有0号输出线会输出高电平，其它的都是低电平，即输出是0</li>
+<li>当4输入线都加电时，输入的值就相当于是1111，这时只有15号输出线会输出高电平，其它都是低电平，即输出就是15</li>
+</ul>
+<p>译码器相当于把地址线信号做了一次翻译</p>
+<h4 id="3-3-线选法"><a href="#3-3-线选法" class="headerlink" title="3.3 线选法"></a>3.3 线选法</h4><p>假如我们只用一个译码器，并且给译码器的每一根输出线都连接到一个存储单元上：<br><img src="/imgs/7808098-789008224455e9ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="image.png"><br>当输出线0有高电平时，与0连接的存储单元 (0, 0) - (0, 7) 就会通过读写电路被输出，这种读取数据的方式被称为线选式。<br>线选式的缺点：假如输入线数有100根，则输出线需要$2^{100}$ 根线，显然是不切实际的，因此就引出了重合法</p>
+<h4 id="3-4-重合法"><a href="#3-4-重合法" class="headerlink" title="3.4 重合法"></a>3.4 重合法</h4><p>使用两个译码器：<br><img src="/imgs/7808098-4580c945791f1ed2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt></p>
+<p>相当于所以的存储单元构成了一个X*Y的矩阵，X地址译码器用于选取行，而Y译码器用于选取列</p>
+<h1 id="四-随机存取存储器-—-RAM"><a href="#四-随机存取存储器-—-RAM" class="headerlink" title="四 随机存取存储器 — RAM"></a>四 随机存取存储器 — RAM</h1><p>可以快速的读取指定地址的数据，使用的都是重合法。分为两种RAM：</p>
+<ul>
+<li>静态RAM：SRAM</li>
+<li>动态RAM：DRAM</li>
+</ul>
+<h4 id="4-1-静态RAM"><a href="#4-1-静态RAM" class="headerlink" title="4.1 静态RAM"></a>4.1 静态RAM</h4><p>单元结构：<br> <img src="/imgs/7808098-82b7f731c0885bbd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="SRAM基本存储电路"></p>
+<ul>
+<li>T1 ~ T4: 这是一个触发器，可以保存数据</li>
+<li>T5 ~ T6: 行地址选择器</li>
+<li>T7 ~ T8: 列地址选择器</li>
+</ul>
+<p>蕊片结构：<br>一个SRAM蕊片其实就是整合了多个单元结构，使用重合法：<br><img src="/imgs/7808098-7a815a324352007d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="SRAM芯片结构"></p>
+<p>图中的每个数字标识的小方格都是一个单元结构</p>
+<h4 id="4-2-动态RAM"><a href="#4-2-动态RAM" class="headerlink" title="4.2 动态RAM"></a>4.2 动态RAM</h4><p>基本的单元结构：<br><img src="/imgs/7808098-e6c480d8561d2413.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="DRAM基本单元结构"><br>这是两种基本单元结构，原理都是一样的，使用Cg，也就是一个电容来保存数据，有电则表示0，没电则表示1。区别在于左则使用3管电路，而右则使用单管电路。</p>
+<p>三管电路DRAM蕊片：<br><img src="/imgs/7808098-ddaba01b056647f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="DRAM蕊片 — 三管"></p>
+<p>单管电路DRAM蕊片外结构图：<br><img src="/imgs/7808098-dcd928345e4c55d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt></p>
+<p><img src="/imgs/7808098-526910d3bd7c8a4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="单管电路DRAM蕊片图"></p>
+<h4 id="4-3-动态RAM的刷新："><a href="#4-3-动态RAM的刷新：" class="headerlink" title="4.3 动态RAM的刷新："></a>4.3 动态RAM的刷新：</h4><ul>
+<li>集中式刷新：死区问题</li>
+<li>分散刷新：没有死区问题，但是每一行都重复刷新了很多次，性能降低很多</li>
+<li>异步刷新：集中式刷新和分散刷新的结合，没有死区问题，也没有重复刷新</li>
+</ul>
+<h4 id="4-4-动态RAM和静态RAM的比较："><a href="#4-4-动态RAM和静态RAM的比较：" class="headerlink" title="4.4 动态RAM和静态RAM的比较："></a>4.4 动态RAM和静态RAM的比较：</h4><table>
+<thead>
+<tr>
+<th>项</th>
+<th>DRAM</th>
+<th>SRAM</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储原理</td>
+<td>电容</td>
+<td>触发器</td>
+</tr>
+<tr>
+<td>集成度</td>
+<td>高</td>
+<td>低</td>
+</tr>
+<tr>
+<td>芯片引脚</td>
+<td>少</td>
+<td>多</td>
+</tr>
+<tr>
+<td>功耗</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>价格</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>慢</td>
+<td>快</td>
+</tr>
+<tr>
+<td>动态RAM: 适用于做内存</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>静态RAM: 适用于做Cache</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h1 id="五-只读存储器"><a href="#五-只读存储器" class="headerlink" title="五 只读存储器"></a>五 只读存储器</h1><h1 id="六-存储器与CPU的连接"><a href="#六-存储器与CPU的连接" class="headerlink" title="六 存储器与CPU的连接"></a>六 存储器与CPU的连接</h1><h4 id="6-1-存储器的扩展方式"><a href="#6-1-存储器的扩展方式" class="headerlink" title="6.1 存储器的扩展方式"></a>6.1 存储器的扩展方式</h4><p><img src="/imgs/7808098-ee9516a253f04669.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="位扩展和字扩展结合"></p>
+<h4 id="6-2-存储器与CPU的连接"><a href="#6-2-存储器与CPU的连接" class="headerlink" title="6.2 存储器与CPU的连接"></a>6.2 存储器与CPU的连接</h4><p><img src="/imgs/7808098-17738ac36f7ed6b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt></p>
+<ul>
+<li>根据每个蕊片的容量，确定好需要多少根地址线，例如需要11根，把11根CPU地址线连接到存储蕊片的地址线</li>
+<li>根据片选器需要的输入线数量，假如为3根，从CPU剩下的地址线中，选取3根地址线连接到片选器的输入线上</li>
+<li>根据地址范围和蕊片的组合方式，把片选器输出线接到蕊片的片选线上</li>
+<li>根据片选器的有效方式，把CPU的剩余地址线接到有效接口上，注意一定要用到MREQ线</li>
+</ul>
+<h4 id="6-3-存储器的校验"><a href="#6-3-存储器的校验" class="headerlink" title="6.3 存储器的校验"></a>6.3 存储器的校验</h4><p>DRAM使用的是电容存值的方式，电容可能露电也可能由于空气中带电粒子的作用而充电，因此电容的值可能会出错，所以需要对数据作校验。</p>
+<p>汉明码：</p>
+<ul>
+<li>分组，根据位置码号的二进制分组。</li>
+<li>每组一个校验码，该组的校验码为该组的所有数据的异或值</li>
+</ul>
+<h4 id="6-4-提高访问速度的措施"><a href="#6-4-提高访问速度的措施" class="headerlink" title="6.4 提高访问速度的措施"></a>6.4 提高访问速度的措施</h4><ul>
+<li>低位交叉：使用多个存储器，使用低位取模的方式，把模后的值相同的数据放到同一个存储器中。</li>
+<li>高位交叉：使用高位取模的方式</li>
+</ul>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#计算机组成原理" >
+    <span class="tag-code">计算机组成原理</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/08/25/ccp03/">
+        <span class="nav-arrow">← </span>
+        
+          计算机组成原理 — 总线
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/09/14/ccp05/">
+        
+          计算机组成原理—IO接口
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#一-概述"><span class="toc-nav-text">一 概述</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-1-分类"><span class="toc-nav-text">1.1 分类</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-2-层次结构"><span class="toc-nav-text">1.2 层次结构</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#二-主存"><span class="toc-nav-text">二 主存</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-1-主存结构"><span class="toc-nav-text">2.1 主存结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-1-主存中的地址"><span class="toc-nav-text">2.1 主存中的地址</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-3主存的性能指标"><span class="toc-nav-text">2.3主存的性能指标</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#三-半导体存储器"><span class="toc-nav-text">三 半导体存储器</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-1-结构"><span class="toc-nav-text">3.1 结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-2-译码器"><span class="toc-nav-text">3.2 译码器</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-3-线选法"><span class="toc-nav-text">3.3 线选法</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-4-重合法"><span class="toc-nav-text">3.4 重合法</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#四-随机存取存储器-—-RAM"><span class="toc-nav-text">四 随机存取存储器 — RAM</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-1-静态RAM"><span class="toc-nav-text">4.1 静态RAM</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-2-动态RAM"><span class="toc-nav-text">4.2 动态RAM</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-3-动态RAM的刷新："><span class="toc-nav-text">4.3 动态RAM的刷新：</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-4-动态RAM和静态RAM的比较："><span class="toc-nav-text">4.4 动态RAM和静态RAM的比较：</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#五-只读存储器"><span class="toc-nav-text">五 只读存储器</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#六-存储器与CPU的连接"><span class="toc-nav-text">六 存储器与CPU的连接</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-1-存储器的扩展方式"><span class="toc-nav-text">6.1 存储器的扩展方式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-2-存储器与CPU的连接"><span class="toc-nav-text">6.2 存储器与CPU的连接</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-3-存储器的校验"><span class="toc-nav-text">6.3 存储器的校验</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#6-4-提高访问速度的措施"><span class="toc-nav-text">6.4 提高访问速度的措施</span></a></li></ol></li></ol></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2019/09/14/ccp04/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "计算机组成原理—存储器的体系结构",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>

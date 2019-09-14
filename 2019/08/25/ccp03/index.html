@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="luohao07&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      计算机组成原理 — 总线 | luohao07
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    <script src="/js/gitment.js"></script>
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+</head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png">
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>luohao07</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">主页</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/tags/" class="item-link">文集</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">记录</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">关于</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">主页</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/tags/" class="menu-link">文集</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">记录</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">关于</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <link rel="stylesheet" href="/css/plugins/gitment.css" />
+<!-- <div id="article-banner" style="display: none">
+  <h2>计算机组成原理 — 总线</h2>
+  <p class="post-date">2019-08-25</p>
+  <div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div> -->
+
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+<main class="app-body flex-box" id="article-page-tag">
+  <!-- Article START -->
+  <article class="post-article" style="margin-top: 60px">
+    <section class="markdown-content">
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">计算机组成原理 — 总线
+      </p>
+      <p class="article-date" style="text-align: right">August 25, 2019</p>
+      <hr />
+      <h1 id="一-总线结构"><a href="#一-总线结构" class="headerlink" title="一 总线结构"></a>一 总线结构</h1><h4 id="1-1-单总线结构"><a href="#1-1-单总线结构" class="headerlink" title="1.1 单总线结构"></a>1.1 单总线结构</h4><p><img src="/imgs/7808098-e142146ee3401eb4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="单总线结构"><br>缺点：所有设备连接到一条总线上，同一时间内只有一个设备可以工作</p>
+<h4 id="1-2-双总线结构"><a href="#1-2-双总线结构" class="headerlink" title="1.2 双总线结构"></a>1.2 双总线结构</h4><p><img src="/imgs/7808098-d831c7a0d0f9ed41.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="image.png"><br>特点：支持DMA，把主存和其他IO设备分离开来</p>
+<h4 id="1-3-三总线结构"><a href="#1-3-三总线结构" class="headerlink" title="1.3 三总线结构"></a>1.3 三总线结构</h4><p><img src="/imgs/7808098-3f512536b2a7ba52.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="三总线结构"><br>特点：把高速IO设备与低速设备分离开，高速设备直接通过DMA总线与主存相连</p>
+<p>另一种三总线结构：<br><img src="/imgs/7808098-312f8d46a6fd0e60.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="另一种三总线结构"><br>特点：在双总线结构的基础上增加了局部总线，解决了CPU与主存速度不匹配的问题</p>
+<h4 id="四总线结构"><a href="#四总线结构" class="headerlink" title="四总线结构"></a>四总线结构</h4><p><img src="/imgs/7808098-98f7138a08c1f01a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="四总线结构"><br>特点：在第二种三总线结构的基础上把高速设备和低速设备分离</p>
+<h1 id="二-总线结构举例"><a href="#二-总线结构举例" class="headerlink" title="二 总线结构举例"></a>二 总线结构举例</h1><h4 id="2-1-传统微型机总线结构"><a href="#2-1-传统微型机总线结构" class="headerlink" title="2.1 传统微型机总线结构"></a>2.1 传统微型机总线结构</h4><p><img src="/imgs/7808098-cb3de7e74b0c6ab1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="传统微型机总线结构"><br>简单的双总线结构</p>
+<h4 id="2-2-VL-BUS总线结构"><a href="#2-2-VL-BUS总线结构" class="headerlink" title="2.2 VL-BUS总线结构"></a>2.2 VL-BUS总线结构</h4><p><img src="/imgs/7808098-7974de80c36ebe7e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="VL-BUS"></p>
+<p>第一种三种总线结构，把高低速设备分别连接到不同的总线上面</p>
+<h4 id="2-3-PCI总线结构"><a href="#2-3-PCI总线结构" class="headerlink" title="2.3 PCI总线结构"></a>2.3 PCI总线结构</h4><p><img src="/imgs/7808098-013977bc2b9ec026.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="PCI总线结构"></p>
+<p>与VL-BUS总线结构类似，但是使用了PCI桥，可以方便的扩展，如多层的PCI总线结构：<br><img src="/imgs/7808098-73d7fc0bab6c3345.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="多层PCI总线结构"></p>
+<h1 id="三-总线控制-—-总线的仲裁"><a href="#三-总线控制-—-总线的仲裁" class="headerlink" title="三 总线控制 — 总线的仲裁"></a>三 总线控制 — 总线的仲裁</h1><p>主设备：可以控制总线使用权的设备<br>从设备：可以响应总线使用权的设备</p>
+<p>控制方式</p>
+<ul>
+<li>集中式控制：只有一个主设备，算法有三种：链式查询法，定时计算法和单独请求法</li>
+<li>分布式控制：多主设备<h4 id="3-1-链式查询法"><a href="#3-1-链式查询法" class="headerlink" title="3.1 链式查询法"></a>3.1 链式查询法</h4><img src="/imgs/7808098-abfa6f6bf4192c04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/600" alt="链式查询法"></li>
+</ul>
+<p>步骤一：IO接口通过BR向总线控制部件发送总线占用请求<br>步骤二：总线控制部件收到占用请求后，通过BG发送信息，查询是哪个设备想要占用总线<br>步骤三：BG信息会从设备0开始，依次向设备n传送，如果某个设备想要占用总线，则它会截下BG信号，不再往下传送。<br>步骤四：想要占用总线的设备截下BG信息后，通过BS向总线控制部件发送信号，然后就拿到了总线的使用权</p>
+<p>优点：结构简单，增添设备简单，设备的优先级明显，可以把优先级高的设备放在前面。<br>缺点：对电路比较敏感，一旦某一个IO接口出现问题，则后面的设备也会跟着无法工作。速度比较慢，需要链式查询</p>
+<h4 id="3-2-计数器定时查询"><a href="#3-2-计数器定时查询" class="headerlink" title="3.2 计数器定时查询"></a>3.2 计数器定时查询</h4><p><img src="/imgs/7808098-861d434a7ed988bf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="计数器定时查询法"></p>
+<p>步骤一：IO接口通过BS线发出占用请求<br>步骤二：总线控制器内部启动一个计数器，这个计数器可以从0开始，也可以从其他任意值开始<br>步骤三：总线控制器查询计数器i对应的第i个IO接口，如果这个IO接口需要占用总线，则通过BS发出总线忙请求，占用总线成功<br>步骤四：如果第i个IO接口不需要占用总线，则总线控制器把i++，然后重复第三步</p>
+<p>优点：设备的优先级比较灵活，可以通过指定计数器的方式控制，而计数器也可以不用每次都是i++，可以由软件设置更加灵活的方式。</p>
+<h4 id="3-3-独立请求方式"><a href="#3-3-独立请求方式" class="headerlink" title="3.3 独立请求方式"></a>3.3 独立请求方式</h4><p><img src="/imgs/7808098-7c2614b67de4e4f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="独立请求方式"></p>
+<ul>
+<li>每个设备对都对应自己的BG和BR线，当一个IO接口想要占用总线时，通过自身的BR发送请求</li>
+<li>总线控制部件内部有一个排队器，用于记录不同设备的优先级，如[3,0,2,1]</li>
+<li>当总线控制部件收到占用请求后，会按照排队器的顺序依次查询每一个设备</li>
+</ul>
+<h1 id="四-总线控制-—-通信控制"><a href="#四-总线控制-—-通信控制" class="headerlink" title="四 总线控制 — 通信控制"></a>四 总线控制 — 通信控制</h1><p>总线仲裁解决了总线占用的问题，而总线的通信控制解决的是主从设备交换数据的协调问题</p>
+<p>通信步骤：</p>
+<ul>
+<li>申请分配阶段：也就是上面说的主设备申请总线控制权的阶段</li>
+<li>寻址阶段：主设备向从设备发送地址和命令</li>
+<li>传数阶段：主从设备交换数据</li>
+<li>结束阶段：主设备撤回有关信息</li>
+</ul>
+<p>总线的通信方式：</p>
+<ul>
+<li>同步通信</li>
+<li>异步通信</li>
+<li>半同步通信</li>
+<li>分离式通信</li>
+</ul>
+<h4 id="4-1-同步通信"><a href="#4-1-同步通信" class="headerlink" title="4.1 同步通信"></a>4.1 同步通信</h4><p><img src="/imgs/7808098-05d7a0e6dd5464b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="同步通信"><br>需要一个时钟，在给点的时间内必需完成特定的工作</p>
+<ul>
+<li>T1前：主设备（如CPU）给出地址信号</li>
+<li>T1：主设备给出读命令</li>
+<li>T2：从设备给出数据信号</li>
+<li>T3：数据信号和控制信息撤销</li>
+<li>T4：地址信号撤销</li>
+</ul>
+<h4 id="4-2-异步通信"><a href="#4-2-异步通信" class="headerlink" title="4.2 异步通信"></a>4.2 异步通信</h4><p><img src="/imgs/7808098-282bba57dd580b07.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="异步通信"></p>
+<p>分为不互锁，半互锁，全互锁三种方式</p>
+<h4 id="4-3-半同步方式"><a href="#4-3-半同步方式" class="headerlink" title="4.3 半同步方式"></a>4.3 半同步方式</h4><p><img src="/imgs/7808098-5ea4b03818149a72.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="半同步方式"></p>
+<h4 id="4-4-分离式通信"><a href="#4-4-分离式通信" class="headerlink" title="4.4 分离式通信"></a>4.4 分离式通信</h4><p><img src="/imgs/7808098-2217b1b67cb5e220.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h1 id="五-总线分类"><a href="#五-总线分类" class="headerlink" title="五 总线分类"></a>五 总线分类</h1><ul>
+<li>片类总线：CPU内部连接各个蕊片的总线</li>
+<li>系统总线：计算机内部连接各个设备的部线</li>
+<li>通信总线：用于连接多个计算机的总线</li>
+</ul>
+<p>系统总线又分为以下三类：</p>
+<ul>
+<li>数据总线：双向，传输数据用的</li>
+<li>地址总线：单向，由CPU发往IO设备</li>
+<li>控制总线：中断线程，总线仲裁等</li>
+</ul>
+
+    </section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#计算机组成原理" >
+    <span class="tag-code">计算机组成原理</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/08/24/job_interview01/">
+        <span class="nav-arrow">← </span>
+        
+          面试常问的内容 — Java基础
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/09/14/ccp04/">
+        
+          计算机组成原理—存储器的体系结构
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#一-总线结构"><span class="toc-nav-text">一 总线结构</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-1-单总线结构"><span class="toc-nav-text">1.1 单总线结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-2-双总线结构"><span class="toc-nav-text">1.2 双总线结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-3-三总线结构"><span class="toc-nav-text">1.3 三总线结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#四总线结构"><span class="toc-nav-text">四总线结构</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#二-总线结构举例"><span class="toc-nav-text">二 总线结构举例</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-1-传统微型机总线结构"><span class="toc-nav-text">2.1 传统微型机总线结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-2-VL-BUS总线结构"><span class="toc-nav-text">2.2 VL-BUS总线结构</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-3-PCI总线结构"><span class="toc-nav-text">2.3 PCI总线结构</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#三-总线控制-—-总线的仲裁"><span class="toc-nav-text">三 总线控制 — 总线的仲裁</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-1-链式查询法"><span class="toc-nav-text">3.1 链式查询法</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-2-计数器定时查询"><span class="toc-nav-text">3.2 计数器定时查询</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-3-独立请求方式"><span class="toc-nav-text">3.3 独立请求方式</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#四-总线控制-—-通信控制"><span class="toc-nav-text">四 总线控制 — 通信控制</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-1-同步通信"><span class="toc-nav-text">4.1 同步通信</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-2-异步通信"><span class="toc-nav-text">4.2 异步通信</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-3-半同步方式"><span class="toc-nav-text">4.3 半同步方式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-4-分离式通信"><span class="toc-nav-text">4.4 分离式通信</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#五-总线分类"><span class="toc-nav-text">五 总线分类</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://www.luohao07.com/2019/08/25/ccp03/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "luohao07";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "计算机组成原理 — 总线",
+        owner: "luohao07",
+        repo: "luohao07.github.io",
+        oauth: {
+          client_id: "a126c8494eadc9e107aa",
+          client_secret: "7f6eeeaeb30c2277093b53db68225d5e1f43a5fa"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+  <script src="https://cdn.bootcss.com/mermaid/8.2.3/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <footer class="app-footer">
+  <p class="copyright">
+    &copy; 2019 | Proudly powered by <a href="#" target="_blank">Hexo</a>
+    <br>
+  </p>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+<script src="/js/script.js"></script>
+  </body>
+</html>
