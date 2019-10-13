@@ -10,7 +10,7 @@
   
   <title>
     
-      redis 哨兵机制和主从模式 | luohao07
+      操作系统—计算机的启动过程 | luohao07
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -130,8 +130,8 @@
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
 <!-- <div id="article-banner" style="display: none">
-  <h2>redis 哨兵机制和主从模式</h2>
-  <p class="post-date">2019-08-10</p>
+  <h2>操作系统—计算机的启动过程</h2>
+  <p class="post-date">2019-10-13</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -148,46 +148,44 @@
   <!-- Article START -->
   <article class="post-article" style="margin-top: 60px">
     <section class="markdown-content">
-      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">redis 哨兵机制和主从模式
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">操作系统—计算机的启动过程
       </p>
-      <p class="article-date" style="text-align: right">August 10, 2019</p>
+      <p class="article-date" style="text-align: right">October 13, 2019</p>
       <hr />
-      <h1 id="一-哨兵的作用"><a href="#一-哨兵的作用" class="headerlink" title="一 哨兵的作用"></a>一 哨兵的作用</h1><p>哨兵机制是redis主从模型解决方案，可以监控主服务器及其下的所有从服务器的状态，如果主服务器挂了，会操作选取其中一个从服务器作为主服务器。</p>
-<p>哨兵通常不止一个，一般都是奇数个，如3，5，7，9。当主节点挂掉之后，会通过投票的方式，选取一个从节点来充当主节点。</p>
-<h1 id="二-哨兵与主从服务节点的通信机制"><a href="#二-哨兵与主从服务节点的通信机制" class="headerlink" title="二 哨兵与主从服务节点的通信机制"></a>二 哨兵与主从服务节点的通信机制</h1><p>由于多个哨兵之间需要投票选取新的主节点，所以它们两两之间需要建立连接：</p>
-<pre class="mermaid">graph TD
-printA[哨兵A]
-printB[哨兵B]
-printC[哨兵C]
-
-printA -- 连接 --> printB
-printB -- 连接 --> printA
-printA -- 连接 --> printC
-printC -- 连接 --> printA
-printB -- 连接 --> printC
-printC -- 连接 --> printB</pre>
-<p>建立连接的方式：如A连接B，即A作为B的客户端登录到B</p>
-<p>哨兵为了发现与它一样监控同一个节点的其他哨兵，需要订阅主节点的<code>_sentinel_:hello</code>频道，并且自己需要每2s一次的通过与主节点的命令连接发送一个以下格式的心跳：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PUBLISH sentinel : he11o &quot;&lt;s_ ip&gt;,&lt;s_ port&gt;,&lt;s_ runid&gt;,&lt;s_ epoch&gt;, &lt;m_ name&gt;,&lt;m_ip&gt;,&lt;m_ port&gt;, &lt;m_ epoch&gt;&quot;</span><br></pre></td></tr></table></figure>
-
-<p>主节点收到这个命令后会把收到的内容转发到<code>_sentinel:hello</code>频道上，这样，其它订阅了这个频道的哨兵就可以收到这个心跳了</p>
-<p>当新增加一个哨兵时，它只需要订阅主节点的<code>_sentinel:hello</code>就可以获取到其它哨兵的信息，并与它们建立连接，同时它也会不断的向主节点发送心跳。</p>
-<h1 id="三-主观下线和客观下线"><a href="#三-主观下线和客观下线" class="headerlink" title="三 主观下线和客观下线"></a>三 主观下线和客观下线</h1><p>主观下线：哨兵会以10s/次的频率向所有与它建立了连接的节点（包括主节点，从节点和其他哨兵节点）发送PING命令，如果对方没有在要求的时间内作出响应，则会认为它已经下线了，这种称为主观下线。</p>
-<p>客观下线：如果主节点主观下线了，这哨兵会向其他哨兵询问，看看其它哨兵是否也认为主节点主观下线了。如果有一半以上的节点都认为主节点已经主观下线了，则哨兵会把主节点标记了客观下线状态。</p>
-<h1 id="四-领头哨兵的选取"><a href="#四-领头哨兵的选取" class="headerlink" title="四 领头哨兵的选取"></a>四 领头哨兵的选取</h1><p>当一个哨兵把主节点标记为客观下线后，就要开始故障转移工作，首选需要选取领头的节点，由它来完成这一系列操作，具体逻辑是：</p>
+      <h2 id="一-预备"><a href="#一-预备" class="headerlink" title="一 预备"></a>一 预备</h2><p>在8086系统CPU中，有两个寄存器CS和IP用于保存CPU接下来需要执行的指令地址，具体计算方法为 <code>CS&lt;&lt;4+IP</code></p>
+<p>例如CS=0x7c0，而IP=0x0001，则<code>CS&lt;&lt;4+IP=0x7c01</code>，因此接下来CPU会从内存地址0x7c01中读取一条指令执行。</p>
+<p>当取出一条指令执行后，IP的内容会被自动加当前指令占用的字节数，从而指向了下一条指令，于是，处理器又从取出下一条指令执行。</p>
+<h2 id="二-BIOS"><a href="#二-BIOS" class="headerlink" title="二 BIOS"></a>二 BIOS</h2><p>在计算机刚加电时，CS和IP会被初始化成固定的默认值，CS=0x7c0，IP=0x0000，因此计算机启动时会从0x7c00这个位置开始执行。</p>
+<p>0x7c00这个位置被固化了BIOS系统，不要纠结这个系统从哪来的，因为它本身就是在那的。</p>
+<p>因此，相当于计算机刚启动时，就会立即开始执行BIOS系统。</p>
+<p>BIOS是指基本输入输出系统（Basic Input/Output System），它只做了一件事：从磁盘中把安装在磁盘中的操作系统（如我们使用的windows，linux）加载到内存中，然后通过修改CS和IP寄存器的内容，把CPU的执行控制权交到操作系统中。</p>
+<p>具体一点，BIOS会把磁盘中安装的操作系统加载到内存中的0x7c00处，，然后修改CS=0x7c0, IP=0x0000，当CPU读取下一条指令执行时就会读到具体操作系统的指令。</p>
+<h2 id="二-主引导扇区"><a href="#二-主引导扇区" class="headerlink" title="二 主引导扇区"></a>二 主引导扇区</h2><p>通过上面的描述，你可能觉得BIOS会负责把操作系统的所有内容都加载到内存中去，这但是实际上并不是这样的。</p>
+<p>BIOS并不知道具体需要怎样加载操作系统（这很正常，不同的操作系统有不同的加载方式），于是BIOS规定：任何安装在磁盘中的操作系统，必需在磁盘的第0扇区存放一段引导代码，BIOS只把这一段引导代码加载到内存中执行，而具体应该如何加载整个操作系统，由操作系统的编写人员自行在引导代码中定义。</p>
+<p>也就是说，BIOS只加载并执行引导代码，而引导代码自行加载整个操作系统。另外值得一提的是，这块存放引导代码的第0扇区被称为主引导扇区，操作系统就是从这里开始的。</p>
+<blockquote>
+<p>这里涉及到磁盘的内容：磁盘中的内容是分扇区维护的，每个扇区共512个字节，第0个扇区为0-511字节，第1个扇区为512-1023字节，依此类推。</p>
+</blockquote>
+<p>将程序交给主引导扇区代码执行后，BIOS就正式功成身退了，毕竟接下来执行的引导代码已经属于操作系统的内容，而具体是怎么执行的，不同的操作系统当然有不同的方法。不过即然已经到操作系统执行了，那么我们可以认为计算机已经启动完毕了。</p>
+<p>以上就是计算机启动的整个过程，简单总结就是：</p>
+<blockquote>
+<p>开机时默认初始化CS=0x7c0, IP=0x0000，CPU自动来始执行0x7c00的BIOS代码<br>BIOS代码把磁盘中第0号扇区的内容加载到0x7c00处，然后修改CS=0x7c0, IP=0x00000，CPU又开始执行操作系统的引导代码</p>
+</blockquote>
+<h2 id="三-linux0-11-的主引导扇区代码"><a href="#三-linux0-11-的主引导扇区代码" class="headerlink" title="三 linux0.11 的主引导扇区代码"></a>三 linux0.11 的主引导扇区代码</h2><p>当CPU开始执行引导代码后，计算机就算启动完成了，但是操作系统还没有完全启动成功，接下来以linux0.11为例说说引导代码后续的内容，linux0.11已经是非常老的内容了，但是对于学习操作系统来说，研究它就够了。</p>
+<p>linux0.11的主引导扇区代码定义在文件bootsect.s中，这是一段汇编代码。会把操作系统剩下的所有内容都加载到内存中。</p>
+<p>操作系统所有的代码都加载到内存中去之后，并不能真正的交给操作系统处理，因为操作系统还需要初始化，所以在此之前还需要执行一断setup.s汇编代码，用于初始化系统。</p>
+<p>因加载完毕后bootsect.s会通过修改CS:IP值的方式，让CPU去执行setup.s，至此，bootsect.s代码就算是完成使命了。</p>
+<p>setup.s代码存放在磁盘的0-4扇区，会被加载到内存的0x90200处。它主要是初始化了一些系统的基本内容，如内存长度，显卡类型等。然后会把操作系统剩下的核心内容移动到0x0000地址处，再通过修改CS:IP的方式，让CPU开始执行操作系统的核心内容（以下称操作系统内核）。</p>
+<p>操作系统内核开始执行前还会先进一步初始化系统，在内核最开始的地方是一个head.s代码段，这里主要是使用一些牛逼的手段调用到C语言的main函数。从这里开始，操作系统终于进入到了C语言编写的内容。</p>
+<p>在main函数的头部，还是会先进行进一步的初始化，这个初始化更加仔细，而且也更多，例如初始化了内存管理用的页表，初始化了中断向量表等。到此，操作系统正式启动完成。</p>
+<p>总结：linux0.11启动过程：</p>
 <ul>
-<li>每一个想要成为领头节点的哨兵都需要向其它节点发送命令，要求它们选取自己为领头节点</li>
-<li>任意一个哨兵，在它收到其他节点选取领头节点的请求后，如果自己没有选取过其他节点为领头节点，则会这个请求，否则会拒绝这个操作</li>
-<li>如果一个哨兵获得了一半以上的节点的同意，这它就成为了领头节点</li>
+<li>先执行主引导扇区代码，即bootsect.s代码，把操作系统的所有内存加载到内存中</li>
+<li>再执行setup.s代码，它会初始化一些硬件数据，并且把操作系统的内核移动到0x0000地址处</li>
+<li>再跳到0x0000地址处开始执行，执行到的是head.s代码段，这里会通过一些比较牛逼的方式调用到C语言编写的main函数中</li>
+<li>在main函数中会进一初始化系统，如中断向量，内存管理的数据结构等</li>
 </ul>
-<h1 id="五-故障转移工作"><a href="#五-故障转移工作" class="headerlink" title="五 故障转移工作"></a>五 故障转移工作</h1><p>领头节点选取完成后，会开始操作故障转移：</p>
-<ul>
-<li>从从节点中选取一个节点，晋升为主节点</li>
-<li>向新节点发送一个<code>SLAVEOF no one</code>命令，通知它成为了主节点</li>
-<li>不断的获取新主节点的信息，如果返回值包含<code>role: master</code>，说明新主节点已经得到了通知，并且认为自己为主节点了</li>
-<li>向其他的从节点发送<code>SLAVEOF ${newMasterIpPort}</code>命令，通知它们复制新的主节点</li>
-<li>监控旧的主节点，如果它重新上线，则让它成为新的主节点的从节点</li>
-</ul>
+<p>再跟上面的结合起来，整个流程就是：<br> 开机 =》执行BIOS系统 =》执行主引导扇区代码（bootsect.s）=》执行setup.s =》执行head.s =》执行C语言main函数。</p>
 
     </section>
     <!-- Tags START -->
@@ -195,8 +193,8 @@ printC -- 连接 --> printB</pre>
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#redis" >
-    <span class="tag-code">redis</span>
+  <a href="/tags#操作系统" >
+    <span class="tag-code">操作系统</span>
   </a>
 
       </div>
@@ -207,20 +205,13 @@ printC -- 连接 --> printB</pre>
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2019/08/10/redis02/">
+      <a class="nav-left" href="/2019/09/14/ccp6/">
         <span class="nav-arrow">← </span>
         
-          redis 数据结构
+          计算机组成原理—计算机编码
         
       </a>
     
-    
-      <a class="nav-right" href="/2019/08/24/job_interview03/">
-        
-          面试重点 — mysql和redis
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -244,7 +235,7 @@ printC -- 连接 --> printB</pre>
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#一-哨兵的作用"><span class="toc-nav-text">一 哨兵的作用</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#二-哨兵与主从服务节点的通信机制"><span class="toc-nav-text">二 哨兵与主从服务节点的通信机制</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#三-主观下线和客观下线"><span class="toc-nav-text">三 主观下线和客观下线</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#四-领头哨兵的选取"><span class="toc-nav-text">四 领头哨兵的选取</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#五-故障转移工作"><span class="toc-nav-text">五 故障转移工作</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-预备"><span class="toc-nav-text">一 预备</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-BIOS"><span class="toc-nav-text">二 BIOS</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-主引导扇区"><span class="toc-nav-text">二 主引导扇区</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-linux0-11-的主引导扇区代码"><span class="toc-nav-text">三 linux0.11 的主引导扇区代码</span></a></li></ol>
     
   </div>
 </aside>
@@ -254,7 +245,7 @@ printC -- 连接 --> printB</pre>
 
 <script>
   (function () {
-    var url = 'http://www.luohao07.com/2019/08/10/redis03/';
+    var url = 'http://www.luohao07.com/2019/10/13/os01/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -309,7 +300,7 @@ printC -- 连接 --> printB</pre>
     var gitmentConfig = "luohao07";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "redis 哨兵机制和主从模式",
+        id: "操作系统—计算机的启动过程",
         owner: "luohao07",
         repo: "luohao07.github.io",
         oauth: {

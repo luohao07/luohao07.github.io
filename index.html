@@ -132,6 +132,27 @@
   
     <article class="article-card">
       <h2 class="article-head">
+        <a href="/2019/10/13/os01/">操作系统—计算机的启动过程</a>
+      </h2>
+      <p class="article-date">October 13, 2019</p>
+      
+        
+  <a href="/tags#操作系统" >
+    <span class="tag-code">操作系统</span>
+  </a>
+
+      
+      <div class="article-summary">
+        
+          一 预备在8086系统CPU中，有两个寄存器CS和IP用于保存CPU接下来需要执行的指令地址，具体计算方法为 CS&lt;&lt;4+IP
+例如CS=0x7c0，而IP=0x0001，则CS& ...
+        
+      </div>
+      <a class="more" href="/2019/10/13/os01/">Read more</a>
+    </article>
+  
+    <article class="article-card">
+      <h2 class="article-head">
         <a href="/2019/09/14/ccp6/">计算机组成原理—计算机编码</a>
       </h2>
       <p class="article-date">September 14, 2019</p>
@@ -306,29 +327,6 @@ redis集群（多主）的实现方式
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2019/08/10/redis02/">redis 数据结构</a>
-      </h2>
-      <p class="article-date">August 10, 2019</p>
-      
-        
-  <a href="/tags#redis" >
-    <span class="tag-code">redis</span>
-  </a>
-
-      
-      <div class="article-summary">
-        
-          一 字符串底层使用SDS的数据结构来保存字符串，而不是用C语言中的字符串。SDS即simple dynamic string，结构如下：
-
-len:  已经使用的字段的长度
-free: 未使用 ...
-        
-      </div>
-      <a class="more" href="/2019/08/10/redis02/">Read more</a>
-    </article>
-  
-    <article class="article-card">
-      <h2 class="article-head">
         <a href="/2019/08/10/redis03/">redis 哨兵机制和主从模式</a>
       </h2>
       <p class="article-date">August 10, 2019</p>
@@ -350,7 +348,7 @@ free: 未使用 ...
   
     <article class="article-card">
       <h2 class="article-head">
-        <a href="/2019/08/10/redis04/">redis 集群</a>
+        <a href="/2019/08/10/redis02/">redis 数据结构</a>
       </h2>
       <p class="article-date">August 10, 2019</p>
       
@@ -362,11 +360,13 @@ free: 未使用 ...
       
       <div class="article-summary">
         
-          一 节点1.1 启动集群模式一个redis服务就是一个节点，如果配置了cluster-enabled选项，则会开启集群模型，这时候这一个节点会单独的在自己的集群中。
-例如：在同一台机器上启动三 ...
+          一 字符串底层使用SDS的数据结构来保存字符串，而不是用C语言中的字符串。SDS即simple dynamic string，结构如下：
+
+len:  已经使用的字段的长度
+free: 未使用 ...
         
       </div>
-      <a class="more" href="/2019/08/10/redis04/">Read more</a>
+      <a class="more" href="/2019/08/10/redis02/">Read more</a>
     </article>
   
 
