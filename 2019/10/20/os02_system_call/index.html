@@ -156,7 +156,7 @@
 <p>假如用户程序可以随意访问内存中的数据的话，另一个用户就可以把其他用户的用户名和密码从内存中读出来，这是非常不安全的。</p>
 <p>因此操作系统就把内存划分了很多个区域，每个区域大小都是4K，这样的一个区域就被称为一个页，且每个页都有自己的访问权限及其他的信息。操作系统在初始化时会初时化一个GDT表格，用于记录每个页的所有信息，包括它的id，它的访问权限控制，它的超始地址等等。</p>
 <p>GDT中为每一个页都定义了一个CPL和DPL数据，CPL就是这个页访问别的页时用的权限级别，而DPL是这个页被别的页访问时使用的权限级别。</p>
-<p>如 当一个页A访问另一个页B时，操作系统会检查，要求 <code>A的CPL &lt;= B的DPL</code>，注意是 <code>&lt;=</code>，因为CPL/DPL的值越小，说明权限级别最高。linux一共定义了四种权限级别：<br><img src="https://upload-images.jianshu.io/upload_images/7808098-128dcd6a0e72837a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300" alt></p>
+<p>如 当一个页A访问另一个页B时，操作系统会检查，要求 <code>A的CPL &lt;= B的DPL</code>，注意是 <code>&lt;=</code>，因为CPL/DPL的值越小，说明权限级别最高。linux一共定义了四种权限级别：<br><img src="/imgs/7808098-128dcd6a0e72837a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300" alt></p>
 <p>其中0是系统内核的DPL/CPL，这是最高权限级别，而用户程序DPL/CPL都是3，所以用户程序是无法随意访问内存数据的。</p>
 <p> 操作系统就是使用这样的方式保存内存数据的安全的。但是有一个问题是，如果用户就是需要访问内核中的数据怎么办？例如在linux中有一个用户级命令<code>whoami</code>，会返回当前用户的用户名，而这个用户名是放在内核中的。</p>
 <p><code>whoami</code>这个用户程序在执行时，它的代码段的DPL和CPL肯定都是3（因为是用户程序），而用户名这个数据所在的内存段的CPL/DPL都是0，需要如何才能访问到？</p>
