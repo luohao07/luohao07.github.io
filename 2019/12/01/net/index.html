@@ -10,7 +10,7 @@
   
   <title>
     
-      面试重点 — mysql和redis | luohao07
+      【笔记】计算机网络 | luohao07
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -130,8 +130,8 @@
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
 <!-- <div id="article-banner" style="display: none">
-  <h2>面试重点 — mysql和redis</h2>
-  <p class="post-date">2019-08-24</p>
+  <h2>【笔记】计算机网络</h2>
+  <p class="post-date">2019-12-01</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -148,93 +148,13 @@
   <!-- Article START -->
   <article class="post-article" style="margin-top: 60px">
     <section class="markdown-content">
-      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">面试重点 — mysql和redis
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">【笔记】计算机网络
       </p>
-      <p class="article-date" style="text-align: right">August 24, 2019</p>
+      <p class="article-date" style="text-align: right">December 1, 2019</p>
       <hr />
-      <h1 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h1><p>重点知识</p>
-<ul>
-<li>redis支持的数据类型</li>
-<li>redis的缓存淘汰机制</li>
-<li>redis 备份方式以及实现原现</li>
-<li>redis主从模式的实现方式</li>
-<li>redis集群（多主）的实现方式</li>
-</ul>
-<p>面试题：</p>
-<ul>
-<li>你知识redis中支持哪些数据结构吗</li>
-<li>redis中缓存的淘汰机制有哪些</li>
-<li>redis的复制方式有哪些，是怎么实现的</li>
-</ul>
-<p>推荐看书：</p>
-<ul>
-<li>《redis入门指南》入门级的书，估计三四个小时就能看完了，看完之后应对面试应该没什么问题</li>
-<li>《redis设计与实现》建议看完《redis入门指南》再看，讲得稍微深入一点，系统全面一点</li>
-</ul>
-<h1 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h1><p>重点内容：</p>
-<ul>
-<li>关联查询，左右，右外，全外和内关联的作用及区别</li>
-<li>对group by 语句的使用，笔试中经常会考到</li>
-<li>innodb中的索引结构，B+树结构，以及索引为什么要用B+树，聚集索引和非聚集索引的区别</li>
-<li>mysql查询优化的内容</li>
-<li>mysql事务隔离级别，脏读，幻读，不可重复读问题</li>
-<li>mysql主从复制原理，涉及到哪些线程</li>
-</ul>
-<p>笔试题：<br>有一张User表如下，请删除名称重复的数据，即同名的数据只保留一条</p>
-<table>
-<thead>
-<tr>
-<th>id</th>
-<th>name</th>
-<th>sex</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>张三</td>
-<td>F</td>
-</tr>
-<tr>
-<td>2</td>
-<td>张三</td>
-<td>F</td>
-</tr>
-<tr>
-<td>3</td>
-<td>李四</td>
-<td>M</td>
-</tr>
-<tr>
-<td>4</td>
-<td>李四</td>
-<td>M</td>
-</tr>
-<tr>
-<td>5</td>
-<td>李四</td>
-<td>M</td>
-</tr>
-<tr>
-<td>6</td>
-<td>王五</td>
-<td>F</td>
-</tr>
-</tbody></table>
-<p>这里考的是对group by 语句的使用</p>
-<blockquote>
-<p>DELETE FROM user WHERE id NOT IN (SELECT max(id) FROM User GROUP BY name)</p>
-</blockquote>
-<p>面试题：</p>
-<ul>
-<li>mysql的索引结构是什么，聚集索引和非聚集索引有什么区别，为什么要用B+树（非常重要，10次面试有8次会问到）</li>
-<li>mysql的事务隔离级别有哪些？（这种问题最好不要只回答，有XXXX四种，还要讲一下每一种的特点）</li>
-<li>mysql主从复制原理，涉及到哪些线程</li>
-</ul>
-<p>推荐看书：</p>
-<ul>
-<li>《mysql必知必会》：一些基础知识，看完之后并不一定能应对面试</li>
-<li>《mysql技术内幕innodb存储引擎》：这本书写得非常深，关键看下索引的那一章，想全部看完应该非常要时间，但是如果全看完看懂，那mysql这一块可以算是大师级的人物了</li>
-</ul>
+      <p><img src="/imgs/data-link.png" alt="数据连接层"></p>
+<p><img src="/imgs/network.png" alt="网络层"></p>
+<p><img src="/imgs/trp.png" alt="传输层"></p>
 
     </section>
     <!-- Tags START -->
@@ -242,8 +162,8 @@
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#面试" >
-    <span class="tag-code">面试</span>
+  <a href="/tags#计算机网络" >
+    <span class="tag-code">计算机网络</span>
   </a>
 
       </div>
@@ -254,20 +174,13 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2019/08/10/redis02/">
+      <a class="nav-left" href="/2019/11/02/os03_mem/">
         <span class="nav-arrow">← </span>
         
-          redis 数据结构
+          操作系统—内存
         
       </a>
     
-    
-      <a class="nav-right" href="/2019/08/24/job_interview01/">
-        
-          面试常问的内容 — Java基础
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -291,7 +204,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#redis"><span class="toc-nav-text">redis</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#mysql"><span class="toc-nav-text">mysql</span></a></li></ol>
+      <ol class="nav">none</ol>
     
   </div>
 </aside>
@@ -301,7 +214,7 @@
 
 <script>
   (function () {
-    var url = 'http://www.luohao07.com/2019/08/24/job_interview03/';
+    var url = 'http://www.luohao07.com/2019/12/01/net/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -356,7 +269,7 @@
     var gitmentConfig = "luohao07";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "面试重点 — mysql和redis",
+        id: "【笔记】计算机网络",
         owner: "luohao07",
         repo: "luohao07.github.io",
         oauth: {
