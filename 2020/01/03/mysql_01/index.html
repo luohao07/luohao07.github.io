@@ -10,7 +10,7 @@
   
   <title>
     
-      操作系统—计算机的启动过程 | luohao07
+      MySQL InnoDB关键特性 插入缓冲/两次写/自适应哈希索引等 | luohao07
     
   </title>
   <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -130,8 +130,8 @@
 
     <link rel="stylesheet" href="/css/plugins/gitment.css" />
 <!-- <div id="article-banner" style="display: none">
-  <h2>操作系统—计算机的启动过程</h2>
-  <p class="post-date">2019-10-13</p>
+  <h2>MySQL InnoDB关键特性 插入缓冲/两次写/自适应哈希索引等</h2>
+  <p class="post-date">2020-01-03</p>
   <div class="arrow-down">
     <a href="javascript:;"></a>
   </div>
@@ -148,44 +148,45 @@
   <!-- Article START -->
   <article class="post-article" style="margin-top: 60px">
     <section class="markdown-content">
-      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">操作系统—计算机的启动过程
+      <p style="color: #555 ;font-size: 1.6em; text-align: left;; font-weight: bold">MySQL InnoDB关键特性 插入缓冲/两次写/自适应哈希索引等
       </p>
-      <p class="article-date" style="text-align: right">October 13, 2019</p>
+      <p class="article-date" style="text-align: right">January 3, 2020</p>
       <hr />
-      <h2 id="一-预备"><a href="#一-预备" class="headerlink" title="一 预备"></a>一 预备</h2><p>在8086系统CPU中，有两个寄存器CS和IP用于保存CPU接下来需要执行的指令地址，具体计算方法为 <code>CS&lt;&lt;4+IP</code></p>
-<p>例如CS=0x7c0，而IP=0x0001，则<code>CS&lt;&lt;4+IP=0x7c01</code>，因此接下来CPU会从内存地址0x7c01中读取一条指令执行。</p>
-<p>当取出一条指令执行后，IP的内容会被自动加当前指令占用的字节数，从而指向了下一条指令，于是，处理器又从取出下一条指令执行。</p>
-<h2 id="二-BIOS"><a href="#二-BIOS" class="headerlink" title="二 BIOS"></a>二 BIOS</h2><p>在计算机刚加电时，CS和IP会被初始化成固定的默认值，CS=0x7c0，IP=0x0000，因此计算机启动时会从0x7c00这个位置开始执行。</p>
-<p>0x7c00这个位置被固化了BIOS系统，不要纠结这个系统从哪来的，因为它本身就是在那的。</p>
-<p>因此，相当于计算机刚启动时，就会立即开始执行BIOS系统。</p>
-<p>BIOS是指基本输入输出系统（Basic Input/Output System），它只做了一件事：从磁盘中把安装在磁盘中的操作系统（如我们使用的windows，linux）加载到内存中，然后通过修改CS和IP寄存器的内容，把CPU的执行控制权交到操作系统中。</p>
-<p>具体一点，BIOS会把磁盘中安装的操作系统加载到内存中的0x7c00处，，然后修改CS=0x7c0, IP=0x0000，当CPU读取下一条指令执行时就会读到具体操作系统的指令。</p>
-<h2 id="二-主引导扇区"><a href="#二-主引导扇区" class="headerlink" title="二 主引导扇区"></a>二 主引导扇区</h2><p>通过上面的描述，你可能觉得BIOS会负责把操作系统的所有内容都加载到内存中去，这但是实际上并不是这样的。</p>
-<p>BIOS并不知道具体需要怎样加载操作系统（这很正常，不同的操作系统有不同的加载方式），于是BIOS规定：任何安装在磁盘中的操作系统，必需在磁盘的第0扇区存放一段引导代码，BIOS只把这一段引导代码加载到内存中执行，而具体应该如何加载整个操作系统，由操作系统的编写人员自行在引导代码中定义。</p>
-<p>也就是说，BIOS只加载并执行引导代码，而引导代码自行加载整个操作系统。另外值得一提的是，这块存放引导代码的第0扇区被称为主引导扇区，操作系统就是从这里开始的。</p>
-<blockquote>
-<p>这里涉及到磁盘的内容：磁盘中的内容是分扇区维护的，每个扇区共512个字节，第0个扇区为0-511字节，第1个扇区为512-1023字节，依此类推。</p>
-</blockquote>
-<p>将程序交给主引导扇区代码执行后，BIOS就正式功成身退了，毕竟接下来执行的引导代码已经属于操作系统的内容，而具体是怎么执行的，不同的操作系统当然有不同的方法。不过即然已经到操作系统执行了，那么我们可以认为计算机已经启动完毕了。</p>
-<p>以上就是计算机启动的整个过程，简单总结就是：</p>
-<blockquote>
-<p>开机时默认初始化CS=0x7c0, IP=0x0000，CPU自动来始执行0x7c00的BIOS代码<br>BIOS代码把磁盘中第0号扇区的内容加载到0x7c00处，然后修改CS=0x7c0, IP=0x00000，CPU又开始执行操作系统的引导代码</p>
-</blockquote>
-<h2 id="三-linux0-11-的主引导扇区代码"><a href="#三-linux0-11-的主引导扇区代码" class="headerlink" title="三 linux0.11 的主引导扇区代码"></a>三 linux0.11 的主引导扇区代码</h2><p>当CPU开始执行引导代码后，计算机就算启动完成了，但是操作系统还没有完全启动成功，接下来以linux0.11为例说说引导代码后续的内容，linux0.11已经是非常老的内容了，但是对于学习操作系统来说，研究它就够了。</p>
-<p>linux0.11的主引导扇区代码定义在文件bootsect.s中，这是一段汇编代码。会把操作系统剩下的所有内容都加载到内存中。</p>
-<p>操作系统所有的代码都加载到内存中去之后，并不能真正的交给操作系统处理，因为操作系统还需要初始化，所以在此之前还需要执行一断setup.s汇编代码，用于初始化系统。</p>
-<p>因加载完毕后bootsect.s会通过修改CS:IP值的方式，让CPU去执行setup.s，至此，bootsect.s代码就算是完成使命了。</p>
-<p>setup.s代码存放在磁盘的0-4扇区，会被加载到内存的0x90200处。它主要是初始化了一些系统的基本内容，如内存长度，显卡类型等。然后会把操作系统剩下的核心内容移动到0x0000地址处，再通过修改CS:IP的方式，让CPU开始执行操作系统的核心内容（以下称操作系统内核）。</p>
-<p>操作系统内核开始执行前还会先进一步初始化系统，在内核最开始的地方是一个head.s代码段，这里主要是使用一些牛逼的手段调用到C语言的main函数。从这里开始，操作系统终于进入到了C语言编写的内容。</p>
-<p>在main函数的头部，还是会先进行进一步的初始化，这个初始化更加仔细，而且也更多，例如初始化了内存管理用的页表，初始化了中断向量表等。到此，操作系统正式启动完成。</p>
-<p>总结：linux0.11启动过程：</p>
+      <h2 id="一-插入缓冲"><a href="#一-插入缓冲" class="headerlink" title="一 插入缓冲"></a>一 插入缓冲</h2><h4 id="1-1-解决的问题"><a href="#1-1-解决的问题" class="headerlink" title="1.1 解决的问题"></a>1.1 解决的问题</h4><p>插入多条数据时，除了需要插入聚集索引外，还需要插入到非聚集索引中，然而非聚集索引的插入走的是随机写，这个操作会影响性能。</p>
+<h4 id="1-2-基本原理"><a href="#1-2-基本原理" class="headerlink" title="1.2 基本原理"></a>1.2 基本原理</h4><p>插入非聚集索引时，不会直接写到真正的非聚集索引里面去，而是先写到一个叫<code>插入缓冲</code>的临时文件中(注意插入缓冲虽然名字叫缓冲，实际上是临时文件)</p>
+<p>然后依赖后台线程将插入缓冲中的内容更新到真正的非聚集索引上去。</p>
+<p>由于对插入缓冲的写是连续的，所以这种操作就解决了随机写的问题。</p>
+<h4 id="1-3-使用条件"><a href="#1-3-使用条件" class="headerlink" title="1.3 使用条件"></a>1.3 使用条件</h4><p>并不是所有对非聚集索引的更新都会使用插入缓冲，需要满足以下两个条件：</p>
 <ul>
-<li>先执行主引导扇区代码，即bootsect.s代码，把操作系统的所有内存加载到内存中</li>
-<li>再执行setup.s代码，它会初始化一些硬件数据，并且把操作系统的内核移动到0x0000地址处</li>
-<li>再跳到0x0000地址处开始执行，执行到的是head.s代码段，这里会通过一些比较牛逼的方式调用到C语言编写的main函数中</li>
-<li>在main函数中会进一初始化系统，如中断向量，内存管理的数据结构等</li>
+<li>非聚集索引不是唯一的</li>
+<li>要插入的非聚集索引页不在内存中</li>
 </ul>
-<p>再跟上面的结合起来，整个流程就是：<br> 开机 =》执行BIOS系统 =》执行主引导扇区代码（bootsect.s）=》执行setup.s =》执行head.s =》执行C语言main函数。</p>
+<p><code>为什么不能是唯一索引的？</code></p>
+<p>因为如果是唯一索引，则插入的时候就需要判断是否有重复，而这个判断的过程本身就包含一次随机读，所以即使使用了插入缓冲也无法解决磁盘随机读写的问题</p>
+<p><code>为什么非聚集索引页不能在内存中？</code></p>
+<p>其实并不是非聚集索引页不能在内存中，而是在内存中的非聚集索引页就不需要走插入缓冲了。因为如果在内存中的话，那直接写内存中的缓存页即可。</p>
+<p><code>这里可能还会有疑问，写了内存中的缓存页后，把缓存页刷新到磁盘时不是也会随机写磁盘吗？</code></p>
+<p>其实不是的，内存中的缓存页被更新后不会立即刷新到磁盘中，而是等待后台线程刷新。所以这里也不会随机读写磁盘。</p>
+<p><code>可能还会有疑问，如果内存中的缓存页被更新后不直接刷新到磁盘，那么宕机时岂不是会丢失数据吗？</code></p>
+<p>其实这里也不会，因为在写内存中的缓存页时会先写重做日志，记录更新的内容，而这个重做日志是会在事务提交前就刷新到磁盘中的，所以即使宕机，也可以用重做日志恢复数据。另外重做日志也是磁盘上连续的空间，所以也不会有随机读写</p>
+<h2 id="二-两次写"><a href="#二-两次写" class="headerlink" title="二 两次写"></a>二 两次写</h2><h4 id="2-1-解决的问题"><a href="#2-1-解决的问题" class="headerlink" title="2.1 解决的问题"></a>2.1 解决的问题</h4><p>当数据库写物理页时，如果宕机了，那么可能会导致物理页的一致性被破坏。</p>
+<p>可能有人会说，重做日志不是可以恢复物理页吗？实际上是的，但是要求是在物理页一致的情况下。</p>
+<p>也就是说，如果物理页完全是未写之前的状态，则可以用重做日志恢复。如果物理页已经完全写完了，那么也可以用重做日志恢复。但是如果物理页前面2K写了新的数据，但是后面2K还是旧的数据，则种情况下就无法使用重做日志恢复了。</p>
+<p>这里的两次写就是保证了物理页的一致性，使得即使宕机，也可以用重做日志恢复。</p>
+<h4 id="2-2-基本原理"><a href="#2-2-基本原理" class="headerlink" title="2.2 基本原理"></a>2.2 基本原理</h4><p>在写物理页时，并不是直接写到真正的物理写上去，而是先写到一个临时页上去，临时页写完后，再写物理页。</p>
+<p>这样一来：</p>
+<ul>
+<li>如果写临时页时宕机了，物理页还是完全未写之前的状态，可以用重做日志恢复</li>
+<li>如果写物理页时宕机了，则可以使用临时页来恢复物理页</li>
+</ul>
+<h4 id="2-3-具体实现"><a href="#2-3-具体实现" class="headerlink" title="2.3 具体实现"></a>2.3 具体实现</h4><ul>
+<li>InnoDB中共享表空间中划了2M的空间，叫做double write，专门存放临时页。</li>
+<li>InnoDB还从内存中划出了2M的缓存空间，叫做double write buffer，专门缓存临时页</li>
+<li>每次写物理页时，先写到double write buffer中，然后从double write buffer写到double write上去。最后再从double write buffer写到物理页上去</li>
+</ul>
+<p>你问我为什么要有 <code>double write buffer</code> 这个东西？其实吧InnoDB里面物理页都 会有内存缓存。只是这里单把这2M的缓存取了个名字而已。</p>
+<h2 id="三-自适应哈希索引"><a href="#三-自适应哈希索引" class="headerlink" title="三 自适应哈希索引"></a>三 自适应哈希索引</h2><p>InnoDB自动监控对索引的查找，如果发现建立哈希索引可以提高效率，则会自动建立</p>
+<p>可以使用innodb_adaptive_hash_index来启用或者关闭，默认是开启的</p>
 
     </section>
     <!-- Tags START -->
@@ -193,8 +194,8 @@
       <div class="tags">
         <span>Tags:</span>
         
-  <a href="/tags#操作系统" >
-    <span class="tag-code">操作系统</span>
+  <a href="/tags#MySQL" >
+    <span class="tag-code">MySQL</span>
   </a>
 
       </div>
@@ -205,20 +206,13 @@
   <div class="nav-container">
     <!-- reverse left and right to put prev and next in a more logic postition -->
     
-      <a class="nav-left" href="/2019/09/14/ccp6/">
+      <a class="nav-left" href="/2019/12/01/net/">
         <span class="nav-arrow">← </span>
         
-          计算机组成原理—计算机编码
+          【笔记】计算机网络
         
       </a>
     
-    
-      <a class="nav-right" href="/2019/10/20/os02_system_call/">
-        
-          操作系统-系统调用
-        
-        <span class="nav-arrow"> →</span>
-      </a>
     
   </div>
 
@@ -242,7 +236,7 @@
   <div class="toc-main">
     <strong class="toc-title">Catalog</strong>
     
-      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-预备"><span class="toc-nav-text">一 预备</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-BIOS"><span class="toc-nav-text">二 BIOS</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-主引导扇区"><span class="toc-nav-text">二 主引导扇区</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-linux0-11-的主引导扇区代码"><span class="toc-nav-text">三 linux0.11 的主引导扇区代码</span></a></li></ol>
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-插入缓冲"><span class="toc-nav-text">一 插入缓冲</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-1-解决的问题"><span class="toc-nav-text">1.1 解决的问题</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-2-基本原理"><span class="toc-nav-text">1.2 基本原理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-3-使用条件"><span class="toc-nav-text">1.3 使用条件</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-两次写"><span class="toc-nav-text">二 两次写</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-1-解决的问题"><span class="toc-nav-text">2.1 解决的问题</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-2-基本原理"><span class="toc-nav-text">2.2 基本原理</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-3-具体实现"><span class="toc-nav-text">2.3 具体实现</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-自适应哈希索引"><span class="toc-nav-text">三 自适应哈希索引</span></a></li></ol>
     
   </div>
 </aside>
@@ -252,7 +246,7 @@
 
 <script>
   (function () {
-    var url = 'http://www.luohao07.com/2019/10/13/os01/';
+    var url = 'http://www.luohao07.com/2020/01/03/mysql_01/';
     var banner = ''
     if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
       $('#article-banner').css({
@@ -307,7 +301,7 @@
     var gitmentConfig = "luohao07";
     if (gitmentConfig !== 'undefined') {
       var gitment = new Gitment({
-        id: "操作系统—计算机的启动过程",
+        id: "MySQL InnoDB关键特性 插入缓冲/两次写/自适应哈希索引等",
         owner: "luohao07",
         repo: "luohao07.github.io",
         oauth: {
